@@ -23,6 +23,11 @@ import * as DocumentPicker from 'expo-document-picker';
 // Componentes
 import Inicio from './modulos/Inicio';
 import PerfilModal from './PerfilModal';
+import Formacion from './modulos/Formacion';
+import Masc from './modulos/Masc';
+import Contacto from './modulos/Contacto';
+import AgendarArbitraje from './modulos/AgendarArbitraje';
+import QuienesSomos from './modulos/QuienesSomos';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -514,7 +519,12 @@ function ODRScreen({ navigation }: any) {
     }, []);
 
     const menuItems = [
-        { id: 'inicio', title: 'Inicio', component: <Inicio /> },
+    { id: 'inicio', title: 'Inicio', component: <Inicio /> },
+    { id: 'quienessomos', title: 'Quienes somos', component: <QuienesSomos /> },
+    { id: 'formacion', title: 'Formacion', component: <Formacion /> },
+    { id: 'masc', title: 'Masc', component: <Masc /> },
+    { id: 'contacto', title: 'Contacto', component: <Contacto /> },
+    { id: 'agendararbitraje', title: 'AgendarArbitraje', component: <AgendarArbitraje /> },
     ];
 
     const handleFileUpload = async () => {
@@ -689,17 +699,12 @@ function ODRScreen({ navigation }: any) {
                             style={styles.mainScrollView}
                             contentContainerStyle={styles.scrollContent}
                         >
-                            {menuItems
-                                .filter(item => item.title === activeTab)
-                                .map(item => (
-                                    <View
-                                        key={item.id}
-                                        style={styles.componentContainer}
-                                    >
-                                        {item.component}
-                                    </View>
-                                ))
-                            }
+                            {activeTab === 'Inicio' && <Inicio />}
+                            {activeTab === 'Quienes somos' && <QuienesSomos />}
+                            {activeTab === 'Formacion' && <Formacion />}
+                            {activeTab === 'Masc' && <Masc />}
+                            {activeTab === 'Contacto' && <Contacto />}
+                            {activeTab === 'AgendarArbitraje' && <AgendarArbitraje />}
                         </ScrollView>
                     </View>
 
