@@ -22,6 +22,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
 // Componentes
 import Inicio from './modulos/Inicio';
+import PerfilModal from './PerfilModal';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -859,6 +860,8 @@ function ODRScreen({ navigation }: any) {
                             </SafeAreaView>
                         </View>
                     </Modal>
+
+                    <PerfilModal visible={perfilVisible} onClose={() => setPerfilVisible(false)} />
 
                 </View>
             </SafeAreaView>

@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSignUp } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const RegisterScreen: React.FC = () => {
 	const { isLoaded, signUp, setActive } = useSignUp();
+	const navigation = useNavigation();
 	const [email, setEmail] = useState('');
+	const [firstName, setFirstName] = useState('');
+	const [lastName, setLastName] = useState('');
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +31,7 @@ const RegisterScreen: React.FC = () => {
 
 	const onSignUpPress = async () => {
 		if (!isLoaded) return;
-		if (!email || !username || !password) {
+		if (!email || !firstName || !lastName || !username || !password) {
 			Alert.alert('Error', 'Completa todos los campos.');
 			return;
 		}
@@ -44,6 +48,8 @@ const RegisterScreen: React.FC = () => {
 				emailAddress: email,
 				username: username,
 				password,
+				firstName,
+				lastName,
 			});
 			await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
 			setPendingVerification(true);
@@ -58,7 +64,17 @@ const RegisterScreen: React.FC = () => {
 			const signUpAttempt = await signUp.attemptEmailAddressVerification({ code });
 			if (signUpAttempt.status === 'complete') {
 				await setActive({ session: signUpAttempt.createdSessionId });
-				Alert.alert('Éxito', 'Registro y verificación completos.');
+				Alert.alert('Éxito', 'Registro y verificación completos.', [
+					{
+						text: 'OK',
+						onPress: () => {
+							// Redirigir a ODR (inicio) después de verificar
+							if (navigation && navigation.reset) {
+								navigation.reset({ index: 0, routes: [{ name: 'ODR' as never }] });
+							}
+						},
+					},
+				]);
 			} else {
 				Alert.alert('Verificación pendiente', 'Revisa tu correo.');
 			}
@@ -90,6 +106,20 @@ const RegisterScreen: React.FC = () => {
 			) : (
 				<>
 					<Text style={styles.title}>Registrarse</Text>
+					<TextInput
+						style={styles.input}
+						placeholder="Nombre"
+						value={firstName}
+						onChangeText={setFirstName}
+						autoCapitalize="words"
+					/>
+					<TextInput
+						style={styles.input}
+						placeholder="Apellido"
+						value={lastName}
+						onChangeText={setLastName}
+						autoCapitalize="words"
+					/>
 					<TextInput
 						style={styles.input}
 						placeholder="Correo electrónico"
