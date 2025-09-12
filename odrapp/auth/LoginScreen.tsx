@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, Animated, Image } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useSignIn } from '@clerk/clerk-expo';
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
@@ -19,6 +20,52 @@ const LoginScreen: React.FC = () => {
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
+	
+	// Animación para el logo
+	const logoOpacity = useRef(new Animated.Value(0)).current;
+	const logoScale = useRef(new Animated.Value(0.5)).current;
+	
+	// Animaciones para el fondo
+	const backgroundAnimation = useRef(new Animated.Value(0)).current;
+	const backgroundColorAnimation = useRef(new Animated.Value(0)).current;
+
+	useEffect(() => {
+		// Animación de entrada del logo y fondo
+		Animated.parallel([
+			Animated.timing(logoOpacity, {
+				toValue: 1,
+				duration: 1000,
+				useNativeDriver: true,
+			}),
+			Animated.spring(logoScale, {
+				toValue: 1,
+				tension: 100,
+				friction: 8,
+				useNativeDriver: true,
+			}),
+			Animated.timing(backgroundAnimation, {
+				toValue: 1,
+				duration: 1500,
+				useNativeDriver: false,
+			}),
+		]).start();
+
+		// Animación de color de fondo continua
+		Animated.loop(
+			Animated.sequence([
+				Animated.timing(backgroundColorAnimation, {
+					toValue: 1,
+					duration: 4000,
+					useNativeDriver: false,
+				}),
+				Animated.timing(backgroundColorAnimation, {
+					toValue: 0,
+					duration: 4000,
+					useNativeDriver: false,
+				}),
+			])
+		).start();
+	}, []);
 
 	const handleLogin = async () => {
 		if (!isLoaded) return;
@@ -49,13 +96,32 @@ const LoginScreen: React.FC = () => {
 		}
 	};
 
-		return (
-			<KeyboardAvoidingView
-				style={{ flex: 1 }}
-				behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-				keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 30}
-			>
+	return (
+		<SafeAreaProvider>
+			<SafeAreaView style={{ flex: 1 }}>
+				<KeyboardAvoidingView
+					style={{ flex: 1 }}
+					behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+					keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 30}
+				>
 				<View style={styles.container}>
+					{/* Logo con animación */}
+					<Animated.View
+						style={[
+							styles.logoContainer,
+							{
+								opacity: logoOpacity,
+								transform: [{ scale: logoScale }],
+							},
+						]}
+					>
+						<Image
+							source={require('../assets/LOGO GENERAL.png')}
+							style={styles.logo}
+							resizeMode="contain"
+						/>
+					</Animated.View>
+					
 					<Text style={styles.title}>Iniciar Sesión</Text>
 					<TextInput
 						style={styles.input}
@@ -95,7 +161,9 @@ const LoginScreen: React.FC = () => {
 					</TouchableOpacity>
 				</View>
 			</KeyboardAvoidingView>
-		);
+		</SafeAreaView>
+	</SafeAreaProvider>
+	);
 };
 
 const styles = StyleSheet.create({
@@ -105,6 +173,15 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		padding: 20,
 		backgroundColor: '#fff',
+	},
+	logoContainer: {
+		marginBottom: -20,
+		alignItems: 'center',
+		top: -70,
+	},
+	logo: {
+		width: 170,
+		height: 130,
 	},
 	title: {
 		fontSize: 24,

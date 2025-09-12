@@ -5,7 +5,14 @@ import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-ico
 const Inicio: React.FC = () => {
   // Animación de pulso para los íconos de estadísticas y valores
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  
+  // Animaciones de entrada para el logo/icono
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const logoScale = useRef(new Animated.Value(0.8)).current;
+  const logoTranslateY = useRef(new Animated.Value(-20)).current;
+  
   useEffect(() => {
+    // Animación de pulso para estadísticas
     Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
@@ -20,13 +27,48 @@ const Inicio: React.FC = () => {
         }),
       ])
     ).start();
-  }, [pulseAnim]);
+
+    // Animación de entrada para el logo - más elegante y suave
+    Animated.sequence([
+      Animated.delay(300), // Pequeña pausa antes de comenzar
+      Animated.parallel([
+        Animated.timing(logoOpacity, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.spring(logoScale, {
+          toValue: 1,
+          tension: 80,
+          friction: 12,
+          useNativeDriver: true,
+        }),
+        Animated.timing(logoTranslateY, {
+          toValue: 0,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+      ])
+    ]).start();
+  }, [pulseAnim, logoOpacity, logoScale, logoTranslateY]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Banner superior */}
       <View style={styles.bannerContainer}>
-        <Image source={require('../assets/icon.png')} style={styles.bannerImgFull} />
+        <Animated.Image 
+          source={require('../assets/icon.png')} 
+          style={[
+            styles.bannerImgFull,
+            {
+              opacity: logoOpacity,
+              transform: [
+                { scale: logoScale },
+                { translateY: logoTranslateY }
+              ]
+            }
+          ]} 
+        />
       </View>
 
       {/* Layout principal tipo grid */}
@@ -167,8 +209,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bannerImgFull: {
-    width: '100%',
-    height: 210,
+    width: '70%',
+    height: 150,
     resizeMode: 'contain',
     marginBottom: 8,
     backgroundColor: '#fff',
