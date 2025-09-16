@@ -1,10 +1,63 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
 import { useNavigation } from '@react-navigation/native';
 
+// Importar los modales
+import CivilModal from '../modal/CivilModal';
+import TransitoModal from '../modal/TransitoModal';
+import NinezModal from '../modal/NinezModal';
+import PenalModal from '../modal/PenalModal';
+import LaboralModal from '../modal/LaboralModal';
+import InquilinatoModal from '../modal/InquilinatoModal';
+import ComunitarioModal from '../modal/ComunitarioModal';
+import TributarioModal from '../modal/TributarioModal';
+
 const Inicio: React.FC = () => {
+  // Estado para noticias y noticia actual
+  const [noticias, setNoticias] = useState([
+    // Noticias de ejemplo iniciales, se reemplazarán al obtener del backend
+    {
+      titulo: 'ODR Ecuador participa en congreso internacional de mediación',
+      fecha: '15 de septiembre de 2025',
+      desc: 'Nuestro equipo expuso sobre innovación en métodos alternativos de solución de conflictos en el evento realizado en Quito.'
+    },
+    {
+      titulo: 'Nueva alianza con universidades',
+      fecha: '10 de septiembre de 2025',
+      desc: 'Firmamos convenios para fortalecer la formación en mediación y arbitraje en Ecuador.'
+    },
+    {
+      titulo: 'Lanzamiento de plataforma digital',
+      fecha: '1 de septiembre de 2025',
+      desc: 'Presentamos nuestra nueva plataforma para gestión de casos de mediación en línea.'
+    }
+  ]);
+  const [noticiaActual, setNoticiaActual] = useState(0);
+  const [loadingNoticias, setLoadingNoticias] = useState(false);
+  const [modal, setModal] = useState<string | null>(null);
+
+  // Preparado para obtener noticias de un backend
+  useEffect(() => {
+    // Descomenta y ajusta la URL de tu backend:
+    // setLoadingNoticias(true);
+    // fetch('https://tu-backend.com/api/noticias')
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     setNoticias(data);
+    //     setNoticiaActual(0);
+    //   })
+    //   .catch(err => console.error('Error cargando noticias', err))
+    //   .finally(() => setLoadingNoticias(false));
+  }, []);
+
+  const handlePrev = () => {
+    setNoticiaActual((prev) => (prev === 0 ? noticias.length - 1 : prev - 1));
+  };
+  const handleNext = () => {
+    setNoticiaActual((prev) => (prev === noticias.length - 1 ? 0 : prev + 1));
+  };
   const navigation = useNavigation();
   // Animación de pulso para los íconos de estadísticas y valores
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -56,7 +109,8 @@ const Inicio: React.FC = () => {
   }, [pulseAnim, logoOpacity, logoScale, logoTranslateY]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <>
+      <ScrollView contentContainerStyle={styles.container}>
       {/* Banner superior */}
       <View style={styles.bannerContainer}>
         <Animated.Image 
@@ -208,11 +262,163 @@ const Inicio: React.FC = () => {
       </View>
 
       {/* <SignOutButton /> */}
+      {/* Apartado de Últimas Noticias con carrusel */}
+      <View style={styles.newsSection}>
+        <Text style={styles.newsTitle}>Últimas Noticias</Text>
+        <View style={styles.newsCarousel}>
+          <TouchableOpacity onPress={handlePrev} style={styles.arrowBtn} disabled={loadingNoticias || noticias.length === 0}>
+            <Text style={styles.arrowText}>{'<'}</Text>
+          </TouchableOpacity>
+          <View style={styles.newsItem}>
+            {loadingNoticias || noticias.length === 0 ? (
+              <Text style={{ textAlign: 'center', color: '#888' }}>Cargando noticias...</Text>
+            ) : (
+              <>
+                <Text style={styles.newsItemTitle}>{noticias[noticiaActual].titulo}</Text>
+                <Text style={styles.newsItemDate}>{noticias[noticiaActual].fecha}</Text>
+                <Text style={styles.newsItemDesc}>{noticias[noticiaActual].desc}</Text>
+              </>
+            )}
+          </View>
+          <TouchableOpacity onPress={handleNext} style={styles.arrowBtn} disabled={loadingNoticias || noticias.length === 0}>
+            <Text style={styles.arrowText}>{'>'}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Nuestros servicios (justo debajo de noticias) */}
+      <View style={styles.serviciosSection}>
+        <Text style={styles.serviciosTitle}>Nuestros servicios</Text>
+        <Text style={styles.serviciosSubtitle}>Servicios que ofrecemos a nuestros clientes</Text>
+        <View style={styles.serviciosGrid}>
+          <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('civil')}>
+            <FontAwesome5 name="balance-scale" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Text style={styles.servicioNombre}>Civil</Text>
+            <Text style={styles.servicioDesc}>Demarcación de linderos, partición voluntaria de bienes sucesorios, partición de la extinta sociedad conyugal, entre otros.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('transito')}>
+            <MaterialCommunityIcons name="car" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Text style={styles.servicioNombre}>Tránsito</Text>
+            <Text style={styles.servicioDesc}>Lesiones, daños materiales e indemnizaciones.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('ninez')}>
+            <FontAwesome5 name="child" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Text style={styles.servicioNombre}>Niñez y Adolescencia</Text>
+            <Text style={styles.servicioDesc}>Alimentación, Paternidad, Ayuda prenatal, Tenencia, Regulación de visitas, incremento y/o rebaja de pensión alimenticia.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('penal')}>
+            <FontAwesome5 name="gavel" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Text style={styles.servicioNombre}>Penal</Text>
+            <Text style={styles.servicioDesc}>Delitos sancionados con pena máxima privativa de libertad de hasta cinco años.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('laboral')}>
+            <FontAwesome5 name="briefcase" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Text style={styles.servicioNombre}>Laboral</Text>
+            <Text style={styles.servicioDesc}>Forma de pago de liquidación laboral, Forma de pago de jubilación patronal.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('inquilinato')}>
+            <FontAwesome5 name="home" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Text style={styles.servicioNombre}>Inquilinato</Text>
+            <Text style={styles.servicioDesc}>Pago de cánones de arrendamientos atrasados, Desocupación del inmueble.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('comunitario')}>
+            <FontAwesome5 name="users" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Text style={styles.servicioNombre}>Comunitario, usuarios y consumidores</Text>
+            <Text style={styles.servicioDesc}>Uso de áreas comunales, Respeto de normas de convivencia comunitaria (Estatutos y Reglamentos), Daños y perjuicios de ínfima cuantía.</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('tributario')}>
+            <FontAwesome5 name="file-invoice-dollar" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Text style={styles.servicioNombre}>Tributario</Text>
+            <Text style={styles.servicioDesc}>Determinación de la obligación tributaria, sus intereses, recargos y multas; respecto de los plazos y facilidades de pago de la obligación tributaria a recaudar.</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </ScrollView>
+
+    {/* Modales */}
+    {modal === 'civil' && <CivilModal visible={true} onClose={() => setModal(null)} />}
+    {modal === 'transito' && <TransitoModal visible={true} onClose={() => setModal(null)} />}
+    {modal === 'ninez' && <NinezModal visible={true} onClose={() => setModal(null)} />}
+    {modal === 'penal' && <PenalModal visible={true} onClose={() => setModal(null)} />}
+    {modal === 'laboral' && <LaboralModal visible={true} onClose={() => setModal(null)} />}
+    {modal === 'inquilinato' && <InquilinatoModal visible={true} onClose={() => setModal(null)} />}
+    {modal === 'comunitario' && <ComunitarioModal visible={true} onClose={() => setModal(null)} />}
+    {modal === 'tributario' && <TributarioModal visible={true} onClose={() => setModal(null)} />}
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  newsCarousel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    gap: 8,
+  },
+  arrowBtn: {
+    backgroundColor: '#183A7C',
+    borderRadius: 20,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+  },
+  arrowText: {
+    color: '#fff',
+    fontSize: 22,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  newsSection: {
+    width: '100%',
+    backgroundColor: '#f8f8f8',
+    borderRadius: 12,
+    marginTop: 18,
+    padding: 18,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  newsTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#183A7C',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  newsList: {
+    width: '100%',
+    gap: 14,
+  },
+  newsItem: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 14,
+    marginBottom: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.03,
+    shadowRadius: 1,
+    elevation: 1,
+  },
+  newsItemTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#183A7C',
+    marginBottom: 2,
+  },
+  newsItemDate: {
+    fontSize: 12,
+    color: '#888',
+    marginBottom: 4,
+  },
+  newsItemDesc: {
+    fontSize: 14,
+    color: '#444',
+  },
   container: {
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -437,6 +643,70 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     alignSelf: 'center',
+  },
+  serviciosSection: {
+    width: '100%',
+    backgroundColor: '#f8f8f8',
+    borderRadius: 12,
+    marginTop: 18,
+    padding: 18,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  serviciosTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#183A7C',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  serviciosSubtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  serviciosGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 12,
+    width: '100%',
+  },
+  servicioCard: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: '45%',
+    maxWidth: '48%',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  servicioIcon: {
+    marginBottom: 8,
+  },
+  servicioNombre: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#183A7C',
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  servicioDesc: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 16,
   },
 });
 
