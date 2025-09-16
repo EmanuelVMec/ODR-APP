@@ -1,8 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions, Animated, Modal } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
 import { useNavigation } from '@react-navigation/native';
+
+// Definir interfaces
+interface Noticia {
+  titulo: string;
+  fecha: string;
+  desc: string;
+  imagen?: string;
+  id: string | number;
+}
 
 // Importar los modales
 import CivilModal from '../modal/CivilModal';
@@ -16,10 +25,12 @@ import TributarioModal from '../modal/TributarioModal';
 
 const Inicio: React.FC = () => {
   // Estado para noticias y noticia actual
-  const [noticias, setNoticias] = useState([]);
+  const [noticias, setNoticias] = useState<Noticia[]>([]);
   const [noticiaActual, setNoticiaActual] = useState(0);
   const [loadingNoticias, setLoadingNoticias] = useState(false);
   const [modal, setModal] = useState<string | null>(null);
+  const [noticiaModalVisible, setNoticiaModalVisible] = useState(false);
+  const [noticiaSeleccionada, setNoticiaSeleccionada] = useState<Noticia | null>(null);
 
   // Función para formatear la fecha
   const formatearFecha = (fechaStr: string) => {
@@ -46,7 +57,7 @@ const Inicio: React.FC = () => {
       }
       
       const data = await response.json();
-      console.log('Data recibida:', data); // Para debugging
+      //console.log('Data recibida:', data); // Para debugging
       
       // Verificar que data sea un objeto con propiedad noticias
       let noticiasData = [];
@@ -62,15 +73,15 @@ const Inicio: React.FC = () => {
       }
       
       // Filtrar solo noticias activas y usar las fechas correctas
-      const noticiasActivas = noticiasData
+      const noticiasActivas: Noticia[] = noticiasData
         .filter((noticia: any) => noticia.activa !== false) // Incluir si activa es true o undefined
         .map((noticia: any) => ({
           titulo: noticia.titulo || 'Título no disponible',
           // Usar directamente la fecha formateada del backend, o formatear fecha_raw si existe
           fecha: noticia.fecha || (noticia.fecha_raw ? formatearFecha(noticia.fecha_raw) : 'Fecha no disponible'),
           desc: noticia.desc || noticia.descripcion || 'Descripción no disponible',
-          imagen: noticia.imagen || null, // Agregar el campo imagen
-          id: noticia.id || Math.random()
+          imagen: noticia.imagen || undefined, // Agregar el campo imagen
+          id: noticia.id || Math.random().toString()
         }));
       
       if (noticiasActivas.length > 0) {
@@ -82,31 +93,6 @@ const Inicio: React.FC = () => {
       
     } catch (error) {
       console.error('Error fetching noticias:', error);
-      
-      // Fallback a noticias de ejemplo en caso de error
-      setNoticias([
-        {
-          titulo: 'ODR Ecuador participa en congreso internacional de arbitraje',
-          fecha: '15 de noviembre de 2024',
-          desc: 'Nuestro equipo expuso sobre innovación en métodos alternativos de solución de conflictos en el evento realizado en Quito.',
-          imagen: null,
-          id: 1
-        },
-        {
-          titulo: 'Nueva alianza con universidades para formación en MASC',
-          fecha: '10 de noviembre de 2024',
-          desc: 'Firmamos convenios para fortalecer la formación en arbitraje y conciliación en Ecuador.',
-          imagen: null,
-          id: 2
-        },
-        {
-          titulo: 'Lanzamiento de plataforma digital para arbitraje',
-          fecha: '1 de noviembre de 2024',
-          desc: 'Presentamos nuestra nueva plataforma para gestión de casos de arbitraje en línea.',
-          imagen: null,
-          id: 3
-        }
-      ]);
       setNoticiaActual(0);
     } finally {
       setLoadingNoticias(false);
@@ -123,6 +109,18 @@ const Inicio: React.FC = () => {
   
   const handleNext = () => {
     setNoticiaActual((prev) => (prev === noticias.length - 1 ? 0 : prev + 1));
+  };
+
+  // Función para abrir el modal de noticia
+  const abrirNoticiaModal = (noticia: Noticia) => {
+    setNoticiaSeleccionada(noticia);
+    setNoticiaModalVisible(true);
+  };
+
+  // Función para cerrar el modal de noticia
+  const cerrarNoticiaModal = () => {
+    setNoticiaModalVisible(false);
+    setNoticiaSeleccionada(null);
   };
   const navigation = useNavigation();
   // Animación de pulso para los íconos de estadísticas y valores
@@ -335,7 +333,11 @@ const Inicio: React.FC = () => {
           <TouchableOpacity onPress={handlePrev} style={styles.arrowBtn} disabled={loadingNoticias || noticias.length === 0}>
             <Text style={styles.arrowText}>{'<'}</Text>
           </TouchableOpacity>
-          <View style={styles.newsItem}>
+          <TouchableOpacity 
+            style={styles.newsItem}
+            onPress={() => noticias[noticiaActual] && abrirNoticiaModal(noticias[noticiaActual])}
+            disabled={loadingNoticias || noticias.length === 0}
+          >
             {loadingNoticias ? (
               <Text style={{ textAlign: 'center', color: '#888' }}>Cargando noticias...</Text>
             ) : noticias.length === 0 ? (
@@ -352,10 +354,13 @@ const Inicio: React.FC = () => {
                 )}
                 <Text style={styles.newsItemTitle}>{noticias[noticiaActual].titulo}</Text>
                 <Text style={styles.newsItemDate}>{noticias[noticiaActual].fecha}</Text>
-                <Text style={styles.newsItemDesc}>{noticias[noticiaActual].desc}</Text>
+                <Text style={styles.newsItemDescPreview} numberOfLines={3} ellipsizeMode="tail">
+                  {noticias[noticiaActual].desc}
+                </Text>
+                <Text style={styles.leerMasText}>Toca para leer más...</Text>
               </>
             )}
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={handleNext} style={styles.arrowBtn} disabled={loadingNoticias || noticias.length === 0}>
             <Text style={styles.arrowText}>{'>'}</Text>
           </TouchableOpacity>
@@ -436,6 +441,71 @@ const Inicio: React.FC = () => {
     {modal === 'inquilinato' && <InquilinatoModal visible={true} onClose={() => setModal(null)} />}
     {modal === 'comunitario' && <ComunitarioModal visible={true} onClose={() => setModal(null)} />}
     {modal === 'tributario' && <TributarioModal visible={true} onClose={() => setModal(null)} />}
+
+    {/* Modal de Noticia - Versión simplificada */}
+    <Modal
+      visible={noticiaModalVisible}
+      transparent
+      animationType="slide"
+      onRequestClose={cerrarNoticiaModal}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          {/* Header simple con botón cerrar */}
+          <View style={styles.modalHeader}>
+            <View style={styles.modalHeaderLine} />
+            <TouchableOpacity onPress={cerrarNoticiaModal} style={styles.closeIconBtn}>
+              <Ionicons name="close" size={24} color="#666" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Contenido del modal */}
+          {noticiaSeleccionada && (
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.modalScrollView}>
+              <View style={styles.modalContentContainer}>
+                {/* Imagen de la noticia si existe */}
+                {noticiaSeleccionada.imagen && (
+                  <Image
+                    source={{ uri: noticiaSeleccionada.imagen }}
+                    style={styles.modalNewsImage}
+                    resizeMode="cover"
+                  />
+                )}
+                
+                {/* Badge de noticia */}
+                <View style={styles.noticiasBadge}>
+                  <Ionicons name="newspaper-outline" size={16} color="#fff" />
+                  <Text style={styles.noticiasBadgeText}>NOTICIA</Text>
+                </View>
+
+                {/* Título */}
+                <Text style={styles.modalNewsTitle}>{noticiaSeleccionada.titulo}</Text>
+                
+                {/* Fecha con icono */}
+                <View style={styles.modalDateContainer}>
+                  <Ionicons name="calendar-outline" size={16} color="#666" />
+                  <Text style={styles.modalNewsDate}>{noticiaSeleccionada.fecha}</Text>
+                </View>
+                
+                {/* Línea decorativa */}
+                <View style={styles.decorativeLine} />
+                
+                {/* Descripción */}
+                <Text style={styles.modalNewsDesc}>{noticiaSeleccionada.desc}</Text>
+              </View>
+            </ScrollView>
+          )}
+          
+          {/* Botón para cerrar */}
+          <View style={styles.modalFooter}>
+            <TouchableOpacity onPress={cerrarNoticiaModal} style={styles.closeModalBtn}>
+              <Ionicons name="checkmark" size={20} color="#fff" />
+              <Text style={styles.closeModalText}>Entendido</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
     </>
   );
 };
@@ -496,7 +566,8 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 1,
     flex: 1,
-    maxWidth: 280,
+    maxWidth: 350,
+    minWidth: 320,
   },
   newsItemImage: {
     width: '100%',
@@ -519,6 +590,154 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#444',
     lineHeight: 20,
+  },
+  newsItemDescPreview: {
+    fontSize: 14,
+    color: '#444',
+    lineHeight: 20,
+  },
+  leerMasText: {
+    fontSize: 12,
+    color: '#183A7C',
+    fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  // Estilos para el modal de noticias
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    maxHeight: '85%',
+    minHeight: '80%',
+    width: '100%',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 20,
+  },
+  modalHeader: {
+    alignItems: 'center',
+    paddingTop: 12,
+    paddingBottom: 8,
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    position: 'relative',
+    zIndex: 1,
+  },
+  modalHeaderLine: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#ddd',
+    borderRadius: 2,
+    marginBottom: 8,
+  },
+  closeIconBtn: {
+    position: 'absolute',
+    right: 20,
+    top: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 2,
+  },
+  modalScrollView: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  modalContentContainer: {
+    padding: 24,
+    paddingTop: 10,
+  },
+  modalNewsImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  noticiasBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#183A7C',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    marginBottom: 16,
+    gap: 6,
+  },
+  noticiasBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
+  modalNewsTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#183A7C',
+    marginBottom: 12,
+    lineHeight: 28,
+  },
+  modalDateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    gap: 8,
+  },
+  modalNewsDate: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  decorativeLine: {
+    height: 2,
+    backgroundColor: '#FFD600',
+    width: 50,
+    borderRadius: 1,
+    marginBottom: 20,
+  },
+  modalNewsDesc: {
+    fontSize: 16,
+    color: '#333',
+    lineHeight: 24,
+    marginBottom: 40,
+    textAlign: 'left',
+  },
+  modalFooter: {
+    padding: 20,
+    paddingTop: 10,
+    backgroundColor: '#fff',
+    borderBottomLeftRadius: 25,
+    borderBottomRightRadius: 25,
+  },
+  closeModalBtn: {
+    backgroundColor: '#183A7C',
+    borderRadius: 25,
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    shadowColor: '#183A7C',
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  closeModalText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   container: {
     alignItems: 'center',
