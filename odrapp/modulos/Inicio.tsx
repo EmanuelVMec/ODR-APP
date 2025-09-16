@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Dimensions, Animated } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
+import { useNavigation } from '@react-navigation/native';
+
 const Inicio: React.FC = () => {
+  const navigation = useNavigation();
   // Animación de pulso para los íconos de estadísticas y valores
   const pulseAnim = useRef(new Animated.Value(1)).current;
   
@@ -81,7 +84,21 @@ const Inicio: React.FC = () => {
           <Text style={styles.descripcion}>
             ODR-Ecuador aporta a la sociedad en la construcción de una cultura de paz y desarrollo sostenible, a través de la capacitación y la investigación junto con la educación en mediación busca que los conflictos sean resueltos de una manera más pacífica, eficaz y efectiva.
           </Text>
-          <TouchableOpacity style={styles.leerMasBtn} onPress={() => Linking.openURL('https://odrecuador.com/')}> 
+          <TouchableOpacity
+            style={styles.leerMasBtn}
+            onPress={() => {
+              const unique = Date.now();
+              if (navigation.getState && navigation.getState().routes) {
+                const state = navigation.getState();
+                const currentRoute = state.routes[state.index];
+                if (currentRoute.name === 'ODR') {
+                  navigation.setParams({ tab: 'Quienes somos', unique });
+                  return;
+                }
+              }
+              navigation.navigate('ODR', { tab: 'Quienes somos', unique });
+            }}
+          >
             <Text style={styles.leerMasBtnText}>Leer más</Text>
           </TouchableOpacity>
         </View>

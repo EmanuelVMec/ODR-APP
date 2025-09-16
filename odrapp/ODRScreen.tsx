@@ -253,6 +253,7 @@ const LinkifiedText = ({ text }: { text: string }) => {
     );
 };
 
+import { useRoute } from '@react-navigation/native';
 function ODRScreen({ navigation }: any) {
     // Bloquear botón físico de back en Android
     useEffect(() => {
@@ -261,7 +262,21 @@ function ODRScreen({ navigation }: any) {
         return () => backHandler.remove();
     }, []);
     const { user } = require('@clerk/clerk-expo').useUser ? require('@clerk/clerk-expo').useUser() : { user: undefined };
-    const [activeTab, setActiveTab] = useState('Inicio');
+        const [activeTab, setActiveTab] = useState('Inicio');
+        const [tabNavCount, setTabNavCount] = useState(0);
+        const route = useRoute();
+        useEffect(() => {
+            const params = (route as any)?.params;
+            if (params && typeof params.tab === 'string') {
+                // Normalizar el nombre del tab para que coincida con el title exacto
+                if (params.tab.toLowerCase() === 'agendararbitraje') {
+                    setActiveTab('AgendarArbitraje');
+                    setTabNavCount(c => c + 1); // Forzar rerender aunque sea el mismo tab
+                } else {
+                    setActiveTab(params.tab);
+                }
+            }
+        }, [(route as any)?.params?.tab]);
     const [menuVisible, setMenuVisible] = useState(false);
     const [tooltipVisible, setTooltipVisible] = useState(true); // Para WhatsApp
     const [perfilVisible, setPerfilVisible] = useState(false);

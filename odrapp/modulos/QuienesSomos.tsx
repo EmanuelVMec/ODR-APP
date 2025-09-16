@@ -5,24 +5,17 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  Linking,
   StyleSheet,
   Dimensions,
   Platform,
   StatusBar,
-  TextInput,
-  Modal,
-  Alert,
   Animated,
 } from 'react-native';
-import { Ionicons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
 const QuienesSomos = () => {
-  const [isChatVisible, setIsChatVisible] = useState(false);
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
   
   // Animaciones
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -49,31 +42,6 @@ const QuienesSomos = () => {
       }),
     ]).start();
   }, []);
-
-  const toggleChat = () => {
-    setIsChatVisible(!isChatVisible);
-  };
-
-  const handleSubscribe = () => {
-    // Validación simple de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailError('Por favor, ingresa un correo electrónico válido');
-      return;
-    }
-    
-    setEmailError('');
-    Alert.alert('¡Gracias!', 'Te has suscrito correctamente a nuestro boletín');
-    setEmail('');
-  };
-
-  const openWhatsApp = () => {
-    Linking.openURL('https://wa.me/593994795695');
-  };
-
-  const openSocialMedia = (url: string) => {
-    Linking.openURL(url);
-  };
 
   return (
     <View style={styles.container}>
@@ -186,14 +154,6 @@ const QuienesSomos = () => {
               </TouchableOpacity>
             </View>
           </Animated.View>
-          
-          <View style={styles.heroImage}>
-            <Image 
-              source={{ uri: 'https://odrecuador.com/assets/img/list/imagen-odr-altern.webp' }} 
-              style={styles.professionalImage}
-              resizeMode="cover"
-            />
-          </View>
         </View>
 
         {/* Sección de objetivos con diseño mejorado */}
@@ -636,14 +596,17 @@ const styles = StyleSheet.create({
     textAlign: 'justify',
   },
   heroCards: {
-    flexDirection: width < 768 ? 'column' : 'row',
-    gap: 20,
+    flexDirection: 'row', // siempre en fila
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 0,
+    width: '100%',
   },
   missionCard: {
     backgroundColor: '#ffffff',
-    padding: 12,
+    padding: 10,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 10,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -652,14 +615,15 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderLeftWidth: 3,
     borderLeftColor: '#1c3e85',
-    flex: 1,
-    alignSelf: 'flex-start',
+  width: '48%',
+  minHeight: 160,
+  flex: 1,
   },
   visionCard: {
     backgroundColor: '#ffffff',
-    padding: 12,
+    padding: 10,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 10,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -668,8 +632,9 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderLeftWidth: 3,
     borderLeftColor: '#FFD700',
-    flex: 1,
-    alignSelf: 'flex-start',
+  width: '48%',
+  minHeight: 160,
+  flex: 1,
   },
   cardIcon: {
     width: 40,
@@ -686,17 +651,17 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#1c3e85',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   cardText: {
-    fontSize: 15,
+    fontSize: 12,
     textAlign: 'center',
     color: '#6c757d',
-    lineHeight: 20,
-    paddingHorizontal: 4,
+    lineHeight: 16,
+    paddingHorizontal: 2,
   },
   heroImage: {
     flex: 1,

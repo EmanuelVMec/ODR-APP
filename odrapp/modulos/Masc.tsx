@@ -17,10 +17,12 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { FontAwesome5, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 const Masc = () => {
+  const navigation = useNavigation();
   const [whatsappModalVisible, setWhatsappModalVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -104,6 +106,11 @@ const Masc = () => {
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg']
   });
+
+  // Ir directo al tab de AgendarArbitraje en ODRScreen
+  const goToAgendarArbitraje = () => {
+    navigation.navigate('ODR', { tab: 'AgendarArbitraje' });
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -303,23 +310,16 @@ const Masc = () => {
             ¿Se podrá someterse al arbitraje las personas naturales o jurídicas que tengan capacidad para transigir?
           </Text>
           <View style={styles.twoColumnLayout}>
-            <View style={styles.textColumn}>
+            <View style={{flex: 1}}>
               <Text style={styles.sectionText}>
                 Tanto las personas naturales como las personas jurídicas que tengan capacidad legal para transigir pueden someterse al arbitraje.
               </Text>
               <Text style={styles.sectionText}>
-                En otras palabras, toda persona —sea individual o representando a una entidad legal— que esté facultada por la ley para celebrar acuerdos y resolver conflictos mediante la transacción, también puede optar por el arbitraje como medio alternativo para resolver sus disputas.
+                En otras palabras, toda persona sea individual o representando a una entidad legal que esté facultada por la ley para celebrar acuerdos y resolver conflictos mediante la transacción, también puede optar por el arbitraje como medio alternativo para resolver sus disputas.
               </Text>
               <Text style={styles.sectionText}>
                 Este principio está reconocido en muchas legislaciones y normas de arbitraje, que establecen como requisito básico para someterse al arbitraje la capacidad de las partes para transigir.
               </Text>
-            </View>
-            <View style={styles.imageColumn}>
-              <Image 
-                source={{ uri: 'https://odrecuador.com/assets/img/list/juzgado-arbitros.webp' }} 
-                style={styles.contentImage}
-                resizeMode="contain"
-              />
             </View>
           </View>
         </View>
@@ -398,7 +398,12 @@ const Masc = () => {
           
           <TouchableOpacity 
             style={styles.whatsappButton}
-            onPress={() => setWhatsappModalVisible(true)}
+            onPress={() => {
+              const phoneNumber = '593994795695';
+              const message = encodeURIComponent('Hola, necesito información sobre servicios de Arbitraje y Conciliación.');
+              const url = `https://wa.me/${phoneNumber}?text=${message}`;
+              Linking.openURL(url).catch(err => Alert.alert('Error', 'No se pudo abrir WhatsApp.'));
+            }}
           >
             <FontAwesome5 name="whatsapp" size={20} color="#ffffff" />
             <Text style={styles.whatsappButtonText}>Consultar por WhatsApp</Text>
@@ -513,7 +518,7 @@ const Masc = () => {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.enrollButton}>
+          <TouchableOpacity style={styles.enrollButton} onPress={goToAgendarArbitraje}>
             <FontAwesome5 name="user-plus" size={18} color="#ffffff" />
             <Text style={styles.enrollButtonText}>Inscribirse Ahora</Text>
             <MaterialIcons name="arrow-forward" size={18} color="#ffffff" />
@@ -1357,14 +1362,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 
-  // Update section title for colored backgrounds
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1c3e85',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
+  // ...existing styles...
   
   // ...existing styles...
 });

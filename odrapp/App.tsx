@@ -8,6 +8,7 @@ import LoginScreen from './auth/LoginScreen';
 import RegisterScreen from './auth/RegisterScreen';
 import ForgotPasswordScreen from './auth/ForgotPasswordScreen';
 import ODRScreen from './ODRScreen';
+import AgendarArbitraje from './modulos/AgendarArbitraje';
 import { useUser } from '@clerk/clerk-expo';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
@@ -65,6 +66,7 @@ export default function App() {
           <Stack.Screen name="Register" component={RegisterScreen} options={{ title: 'Registrarse' }} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ title: 'Recuperar contraseña' }} />
           <Stack.Screen name="ODR" component={ODRScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AgendarArbitraje" component={AgendarArbitraje} options={{ title: 'Agendar Arbitraje' }} />
         </Stack.Navigator>
         <StatusBar style="auto" />
       </NavigationContainer>

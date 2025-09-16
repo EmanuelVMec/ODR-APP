@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
     maxWidth: 120,
   },
   featureTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#1c3e85',
     marginTop: 8,
