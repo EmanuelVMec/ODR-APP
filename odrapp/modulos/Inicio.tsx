@@ -16,45 +16,111 @@ import TributarioModal from '../modal/TributarioModal';
 
 const Inicio: React.FC = () => {
   // Estado para noticias y noticia actual
-  const [noticias, setNoticias] = useState([
-    // Noticias de ejemplo iniciales, se reemplazarán al obtener del backend
-    {
-      titulo: 'ODR Ecuador participa en congreso internacional de mediación',
-      fecha: '15 de septiembre de 2025',
-      desc: 'Nuestro equipo expuso sobre innovación en métodos alternativos de solución de conflictos en el evento realizado en Quito.'
-    },
-    {
-      titulo: 'Nueva alianza con universidades',
-      fecha: '10 de septiembre de 2025',
-      desc: 'Firmamos convenios para fortalecer la formación en mediación y arbitraje en Ecuador.'
-    },
-    {
-      titulo: 'Lanzamiento de plataforma digital',
-      fecha: '1 de septiembre de 2025',
-      desc: 'Presentamos nuestra nueva plataforma para gestión de casos de mediación en línea.'
-    }
-  ]);
+  const [noticias, setNoticias] = useState([]);
   const [noticiaActual, setNoticiaActual] = useState(0);
   const [loadingNoticias, setLoadingNoticias] = useState(false);
   const [modal, setModal] = useState<string | null>(null);
 
-  // Preparado para obtener noticias de un backend
+  // Función para formatear la fecha
+  const formatearFecha = (fechaStr: string) => {
+    try {
+      const fecha = new Date(fechaStr);
+      return fecha.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return fechaStr;
+    }
+  };
+
+  // Función para obtener noticias del backend
+  const fetchNoticias = async () => {
+    setLoadingNoticias(true);
+    try {
+      const response = await fetch('https://chatbot-0-production.up.railway.app/naula/api/noticias');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Data recibida:', data); // Para debugging
+      
+      // Verificar que data sea un objeto con propiedad noticias
+      let noticiasData = [];
+      if (data && Array.isArray(data.noticias)) {
+        noticiasData = data.noticias;
+      } else if (Array.isArray(data)) {
+        noticiasData = data;
+      } else if (data && Array.isArray(data.results)) {
+        noticiasData = data.results;
+      } else {
+        console.warn('La respuesta no contiene un array de noticias:', data);
+        throw new Error('Formato de respuesta inválido');
+      }
+      
+      // Filtrar solo noticias activas y usar las fechas correctas
+      const noticiasActivas = noticiasData
+        .filter((noticia: any) => noticia.activa !== false) // Incluir si activa es true o undefined
+        .map((noticia: any) => ({
+          titulo: noticia.titulo || 'Título no disponible',
+          // Usar directamente la fecha formateada del backend, o formatear fecha_raw si existe
+          fecha: noticia.fecha || (noticia.fecha_raw ? formatearFecha(noticia.fecha_raw) : 'Fecha no disponible'),
+          desc: noticia.desc || noticia.descripcion || 'Descripción no disponible',
+          imagen: noticia.imagen || null, // Agregar el campo imagen
+          id: noticia.id || Math.random()
+        }));
+      
+      if (noticiasActivas.length > 0) {
+        setNoticias(noticiasActivas);
+        setNoticiaActual(0);
+      } else {
+        throw new Error('No hay noticias activas disponibles');
+      }
+      
+    } catch (error) {
+      console.error('Error fetching noticias:', error);
+      
+      // Fallback a noticias de ejemplo en caso de error
+      setNoticias([
+        {
+          titulo: 'ODR Ecuador participa en congreso internacional de arbitraje',
+          fecha: '15 de noviembre de 2024',
+          desc: 'Nuestro equipo expuso sobre innovación en métodos alternativos de solución de conflictos en el evento realizado en Quito.',
+          imagen: null,
+          id: 1
+        },
+        {
+          titulo: 'Nueva alianza con universidades para formación en MASC',
+          fecha: '10 de noviembre de 2024',
+          desc: 'Firmamos convenios para fortalecer la formación en arbitraje y conciliación en Ecuador.',
+          imagen: null,
+          id: 2
+        },
+        {
+          titulo: 'Lanzamiento de plataforma digital para arbitraje',
+          fecha: '1 de noviembre de 2024',
+          desc: 'Presentamos nuestra nueva plataforma para gestión de casos de arbitraje en línea.',
+          imagen: null,
+          id: 3
+        }
+      ]);
+      setNoticiaActual(0);
+    } finally {
+      setLoadingNoticias(false);
+    }
+  };
+
   useEffect(() => {
-    // Descomenta y ajusta la URL de tu backend:
-    // setLoadingNoticias(true);
-    // fetch('https://tu-backend.com/api/noticias')
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     setNoticias(data);
-    //     setNoticiaActual(0);
-    //   })
-    //   .catch(err => console.error('Error cargando noticias', err))
-    //   .finally(() => setLoadingNoticias(false));
+    fetchNoticias();
   }, []);
 
   const handlePrev = () => {
     setNoticiaActual((prev) => (prev === 0 ? noticias.length - 1 : prev - 1));
   };
+  
   const handleNext = () => {
     setNoticiaActual((prev) => (prev === noticias.length - 1 ? 0 : prev + 1));
   };
@@ -270,10 +336,20 @@ const Inicio: React.FC = () => {
             <Text style={styles.arrowText}>{'<'}</Text>
           </TouchableOpacity>
           <View style={styles.newsItem}>
-            {loadingNoticias || noticias.length === 0 ? (
+            {loadingNoticias ? (
               <Text style={{ textAlign: 'center', color: '#888' }}>Cargando noticias...</Text>
+            ) : noticias.length === 0 ? (
+              <Text style={{ textAlign: 'center', color: '#888' }}>No hay noticias disponibles</Text>
             ) : (
               <>
+                {/* Mostrar imagen si existe */}
+                {noticias[noticiaActual].imagen && (
+                  <Image
+                    source={{ uri: noticias[noticiaActual].imagen }}
+                    style={styles.newsItemImage}
+                    resizeMode="cover"
+                  />
+                )}
                 <Text style={styles.newsItemTitle}>{noticias[noticiaActual].titulo}</Text>
                 <Text style={styles.newsItemDate}>{noticias[noticiaActual].fecha}</Text>
                 <Text style={styles.newsItemDesc}>{noticias[noticiaActual].desc}</Text>
@@ -284,6 +360,22 @@ const Inicio: React.FC = () => {
             <Text style={styles.arrowText}>{'>'}</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Indicadores de posición del carrusel */}
+        {noticias.length > 1 && (
+          <View style={styles.carouselIndicators}>
+            {noticias.map((_, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.indicator,
+                  index === noticiaActual ? styles.indicatorActive : styles.indicatorInactive
+                ]}
+                onPress={() => setNoticiaActual(index)}
+              />
+            ))}
+          </View>
+        )}
       </View>
 
       {/* Nuestros servicios (justo debajo de noticias) */}
@@ -403,6 +495,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.03,
     shadowRadius: 1,
     elevation: 1,
+    flex: 1,
+    maxWidth: 280,
+  },
+  newsItemImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 12,
   },
   newsItemTitle: {
     fontWeight: 'bold',
@@ -418,6 +518,7 @@ const styles = StyleSheet.create({
   newsItemDesc: {
     fontSize: 14,
     color: '#444',
+    lineHeight: 20,
   },
   container: {
     alignItems: 'center',
@@ -707,6 +808,23 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
     lineHeight: 16,
+  },
+  carouselIndicators: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 12,
+    gap: 6,
+  },
+  indicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  indicatorActive: {
+    backgroundColor: '#183A7C',
+  },
+  indicatorInactive: {
+    backgroundColor: '#ccc',
   },
 });
 
