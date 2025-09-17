@@ -253,7 +253,7 @@ const Masc = () => {
           <View style={styles.documentsGrid}>
             <TouchableOpacity 
               style={styles.documentCard}
-              onPress={() => openLink('https://drive.google.com/file/d/1Nitqi-gaVLMv6Ghd4A6LRNGcOcrDxuA1/view?usp=sharing')}
+              onPress={() => openLink('https://drive.google.com/file/d/1SxydYW8dRt49VHosjG1-ZOJMUFGEdKWW/view?usp=sharing')}
             >
               <View style={styles.documentIcon}>
                 <FontAwesome5 name="file-pdf" size={24} color="#e74c3c" />
@@ -270,7 +270,7 @@ const Masc = () => {
 
             <TouchableOpacity 
               style={styles.documentCard}
-              onPress={() => openLink('https://odrecuador.com/listado-arbitros')}
+              onPress={() => openLink('https://docs.google.com/spreadsheets/d/10SHYSjMMPFoXRtnat9_5RnB_MHuCHD-P/edit?usp=sharing&ouid=109161900150982709425&rtpof=true&sd=true')}
             >
               <View style={styles.documentIcon}>
                 <FontAwesome5 name="users-cog" size={24} color="#3498db" />
@@ -300,6 +300,30 @@ const Masc = () => {
                 <FontAwesome5 name="download" size={12} color="#ffffff" />
                 <Text style={styles.downloadText}>Descargar</Text>
               </View>
+            </TouchableOpacity>
+
+             <TouchableOpacity 
+              style={styles.documentCard}
+              onPress={() => openLink('https://drive.google.com/file/d/14UJbymsFRHFPTNEKkS4p2p8JHiYN2B_e/view?usp=sharing')}
+            >
+              <View style={styles.documentIcon}>
+                <FontAwesome5 name="university" size={24} color="#1c3e85" />
+              </View>
+              <Text style={styles.documentTitle}>Centro Oficial Registrado</Text>
+              <Text style={styles.documentDescription}>
+                #18 EN EL REGISTRO NACIONAL. Reconocido oficialmente por la Función Judicial del Ecuador
+              </Text>
+              <View style={styles.downloadButton}>
+                <FontAwesome5 name="download" size={12} color="#ffffff" />
+                <Text style={styles.downloadText}>Descargar</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8, alignSelf: 'center' }}
+              onPress={() => openLink('https://www.funcionjudicial.gob.ec/registro-centros-arbitraje/centros-de-arbitraje-aprobados-por-el-pleno/')}
+            >
+              <Text style={{ fontSize: 15, color: '#1c3e85', fontWeight: 'bold', marginRight: 6 }}>🔍 Verificar en</Text>
+              <Text style={{ fontSize: 15, color: '#1c3e85', textDecorationLine: 'underline' }}>www.funcionjudicial.gob.ec</Text>
             </TouchableOpacity>
           </View>
         </View>
