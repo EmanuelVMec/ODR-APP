@@ -389,42 +389,58 @@ const Inicio: React.FC = () => {
         <Text style={styles.serviciosSubtitle}>Servicios que ofrecemos a nuestros clientes</Text>
         <View style={styles.serviciosGrid}>
           <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('civil')}>
-            <FontAwesome5 name="balance-scale" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <FontAwesome5 name="balance-scale" size={28} color="#183A7C" style={styles.servicioIcon} />
+            </Animated.View>
             <Text style={styles.servicioNombre}>Civil</Text>
             <Text style={styles.servicioDesc}>Demarcación de linderos, partición voluntaria de bienes sucesorios, partición de la extinta sociedad conyugal, entre otros.</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('transito')}>
-            <MaterialCommunityIcons name="car" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <MaterialCommunityIcons name="car" size={28} color="#183A7C" style={styles.servicioIcon} />
+            </Animated.View>
             <Text style={styles.servicioNombre}>Tránsito</Text>
             <Text style={styles.servicioDesc}>Lesiones, daños materiales e indemnizaciones.</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('ninez')}>
-            <FontAwesome5 name="child" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <FontAwesome5 name="child" size={28} color="#183A7C" style={styles.servicioIcon} />
+            </Animated.View>
             <Text style={styles.servicioNombre}>Niñez y Adolescencia</Text>
             <Text style={styles.servicioDesc}>Alimentación, Paternidad, Ayuda prenatal, Tenencia, Regulación de visitas, incremento y/o rebaja de pensión alimenticia.</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('penal')}>
-            <FontAwesome5 name="gavel" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <FontAwesome5 name="gavel" size={28} color="#183A7C" style={styles.servicioIcon} />
+            </Animated.View>
             <Text style={styles.servicioNombre}>Penal</Text>
             <Text style={styles.servicioDesc}>Delitos sancionados con pena máxima privativa de libertad de hasta cinco años.</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('laboral')}>
-            <FontAwesome5 name="briefcase" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <FontAwesome5 name="briefcase" size={28} color="#183A7C" style={styles.servicioIcon} />
+            </Animated.View>
             <Text style={styles.servicioNombre}>Laboral</Text>
             <Text style={styles.servicioDesc}>Forma de pago de liquidación laboral, Forma de pago de jubilación patronal.</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('inquilinato')}>
-            <FontAwesome5 name="home" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <FontAwesome5 name="home" size={28} color="#183A7C" style={styles.servicioIcon} />
+            </Animated.View>
             <Text style={styles.servicioNombre}>Inquilinato</Text>
             <Text style={styles.servicioDesc}>Pago de cánones de arrendamientos atrasados, Desocupación del inmueble.</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('comunitario')}>
-            <FontAwesome5 name="users" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <FontAwesome5 name="users" size={28} color="#183A7C" style={styles.servicioIcon} />
+            </Animated.View>
             <Text style={styles.servicioNombre}>Comunitario, usuarios y consumidores</Text>
             <Text style={styles.servicioDesc}>Uso de áreas comunales, Respeto de normas de convivencia comunitaria (Estatutos y Reglamentos), Daños y perjuicios de ínfima cuantía.</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.servicioCard} onPress={() => setModal('tributario')}>
-            <FontAwesome5 name="file-invoice-dollar" size={28} color="#183A7C" style={styles.servicioIcon} />
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <FontAwesome5 name="file-invoice-dollar" size={28} color="#183A7C" style={styles.servicioIcon} />
+            </Animated.View>
             <Text style={styles.servicioNombre}>Tributario</Text>
             <Text style={styles.servicioDesc}>Determinación de la obligación tributaria, sus intereses, recargos y multas; respecto de los plazos y facilidades de pago de la obligación tributaria a recaudar.</Text>
           </TouchableOpacity>

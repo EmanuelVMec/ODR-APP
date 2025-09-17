@@ -28,6 +28,7 @@ import Masc from './modulos/Masc';
 import Contacto from './modulos/Contacto';
 import AgendarArbitraje from './modulos/AgendarArbitraje';
 import QuienesSomos from './modulos/QuienesSomos';
+import Cursos from './modulos/Cursos';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -262,21 +263,21 @@ function ODRScreen({ navigation }: any) {
         return () => backHandler.remove();
     }, []);
     const { user } = require('@clerk/clerk-expo').useUser ? require('@clerk/clerk-expo').useUser() : { user: undefined };
-        const [activeTab, setActiveTab] = useState('Inicio');
-        const [tabNavCount, setTabNavCount] = useState(0);
-        const route = useRoute();
-        useEffect(() => {
-            const params = (route as any)?.params;
-            if (params && typeof params.tab === 'string') {
-                // Normalizar el nombre del tab para que coincida con el title exacto
-                if (params.tab.toLowerCase() === 'agendararbitraje') {
-                    setActiveTab('AgendarArbitraje');
-                    setTabNavCount(c => c + 1); // Forzar rerender aunque sea el mismo tab
-                } else {
-                    setActiveTab(params.tab);
-                }
+    const [activeTab, setActiveTab] = useState('Inicio');
+    const [tabNavCount, setTabNavCount] = useState(0);
+    const route = useRoute();
+    useEffect(() => {
+        const params = (route as any)?.params;
+        if (params && typeof params.tab === 'string') {
+            // Normalizar el nombre del tab para que coincida con el title exacto
+            if (params.tab.toLowerCase() === 'agendararbitraje') {
+                setActiveTab('AgendarArbitraje');
+                setTabNavCount(c => c + 1); // Forzar rerender aunque sea el mismo tab
+            } else {
+                setActiveTab(params.tab);
             }
-        }, [(route as any)?.params?.tab]);
+        }
+    }, [(route as any)?.params?.tab]);
     const [menuVisible, setMenuVisible] = useState(false);
     const [tooltipVisible, setTooltipVisible] = useState(true); // Para WhatsApp
     const [perfilVisible, setPerfilVisible] = useState(false);
@@ -533,13 +534,24 @@ function ODRScreen({ navigation }: any) {
         };
     }, []);
 
+    // Abrir el chatbot automáticamente si viene el parámetro desde navegación
+    useEffect(() => {
+        const params = (route as any)?.params;
+        if (params && params.openChatbot) {
+            openChatbot();
+            // Limpiar el parámetro para evitar que se vuelva a abrir al navegar
+            navigation.setParams({ openChatbot: undefined });
+        }
+    }, [(route as any)?.params?.openChatbot]);
+
     const menuItems = [
-    { id: 'inicio', title: 'Inicio', component: <Inicio /> },
-    { id: 'quienessomos', title: 'Quienes somos', component: <QuienesSomos /> },
-    { id: 'formacion', title: 'Formacion', component: <Formacion /> },
-    { id: 'masc', title: 'Masc', component: <Masc /> },
-    { id: 'contacto', title: 'Contacto', component: <Contacto /> },
-    { id: 'agendararbitraje', title: 'AgendarArbitraje', component: <AgendarArbitraje /> },
+        { id: 'inicio', title: 'Inicio', component: <Inicio /> },
+        { id: 'quienessomos', title: 'Quienes somos', component: <QuienesSomos /> },
+        { id: 'cursos', title: 'Cursos', component: <Cursos /> },
+        { id: 'formacion', title: 'Formacion', component: <Formacion /> },
+        { id: 'masc', title: 'Masc', component: <Masc /> },
+        { id: 'contacto', title: 'Contacto', component: <Contacto /> },
+        { id: 'agendararbitraje', title: 'AgendarArbitraje', component: <AgendarArbitraje /> },
     ];
 
     const handleFileUpload = async () => {
@@ -679,11 +691,11 @@ function ODRScreen({ navigation }: any) {
                     {/* Header */}
                     <View style={styles.header}>
                         <View style={styles.logoContainer}>
-                            {/* <Image
-                source={require('./assets/naula_logo.png')}
-                style={styles.logo}
-                resizeMode="contain"
-              /> */}
+                            {<Image
+                                source={require('./assets/icon.png')}
+                                style={styles.logo}
+                                resizeMode="contain"
+                            />}
                             <Text style={styles.headerTitle}>ODR Ecuador</Text>
                         </View>
                         <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
@@ -716,6 +728,7 @@ function ODRScreen({ navigation }: any) {
                         >
                             {activeTab === 'Inicio' && <Inicio />}
                             {activeTab === 'Quienes somos' && <QuienesSomos />}
+                            {activeTab === 'Cursos' && <Cursos />}
                             {activeTab === 'Formacion' && <Formacion />}
                             {activeTab === 'Masc' && <Masc />}
                             {activeTab === 'Contacto' && <Contacto />}

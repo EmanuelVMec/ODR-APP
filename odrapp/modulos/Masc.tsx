@@ -109,7 +109,7 @@ const Masc = () => {
 
   // Ir directo al tab de AgendarArbitraje en ODRScreen
   const goToAgendarArbitraje = () => {
-    navigation.navigate('ODR', { tab: 'AgendarArbitraje' });
+    navigation.navigate('ODR', { tab: 'Cursos' });
   };
 
   return (

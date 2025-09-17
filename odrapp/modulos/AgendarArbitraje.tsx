@@ -6,12 +6,13 @@ import {
   ScrollView, 
   TextInput, 
   TouchableOpacity, 
-  Alert,
+  Modal,
   Animated,
   Platform,
   KeyboardAvoidingView,
   Keyboard,
-  Dimensions 
+  Dimensions,
+  Alert
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
@@ -503,6 +504,8 @@ const AgendarArbitraje: React.FC = () => {
     oficina: '',
     comprobantePago: null
   });
+  // Estado para modal de éxito
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
   // Estado para el teclado
   const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -707,20 +710,111 @@ const AgendarArbitraje: React.FC = () => {
     return true;
   };
 
-  const handleSubmit = () => {
-    if (validateForm()) {
-      Alert.alert(
-        'Solicitud Enviada', 
-        'Su solicitud de arbitraje ha sido enviada exitosamente. Nos contactaremos con usted pronto.',
-        [{ text: 'OK' }]
-      );
-      // Aquí se implementaría la lógica para enviar a un backend
+const handleSubmit = async () => {
+  if (validateForm()) {
+    try {
+      const endpoint = 'https://chatbot-0-production.up.railway.app/naula/api/agendar-arbitraje/'; // Cambia por tu dominio real
+      let response;
+      let result;
+
+      // Mapeo de campos para el backend
+      const dataToSend = {
+        nombre_solicitante: formData.nombreCompleto,
+        cedula_solicitante: formData.cedula,
+        telefono_solicitante: formData.telefono,
+        email_solicitante: formData.correoElectronico,
+        direccion_solicitante: formData.direccionDomiciliaria,
+        nombre_invitado: formData.nombreCompletoInvitado,
+        cedula_invitado: formData.cedulaInvitado,
+        telefono_invitado: formData.telefonoInvitado,
+        email_invitado: formData.correoElectronicoInvitado,
+        direccion_invitado: formData.direccionDomiciliariaInvitado,
+        tipo_audiencia: formData.tipoAudiencia,
+        materia: formData.materia,
+        asunto: formData.asunto,
+        fecha_hora: formData.fechaHora,
+        provincia: formData.provincia,
+        ciudad: formData.ciudad,
+        oficina: formData.oficina,
+        nombre_comprobante_pago: formData.tipoAudiencia === 'virtual' && formData.comprobantePago ? formData.comprobantePago.name : '',
+      };
+
+      if (formData.tipoAudiencia === 'virtual') {
+        // Enviar como multipart/form-data con archivo
+        const form = new FormData();
+        Object.entries(dataToSend).forEach(([key, value]) => {
+          form.append(key, value || '');
+        });
+        if (formData.comprobantePago) {
+          form.append('comprobante_pago', {
+            uri: formData.comprobantePago.uri,
+            name: formData.comprobantePago.name,
+            type: formData.comprobantePago.mimeType || 'application/pdf',
+          } as any);
+        }
+        console.log('Enviando datos (form-data):', form);
+        response = await fetch(endpoint, {
+          method: 'POST',
+          body: form,
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+      } else {
+        // Enviar como JSON (sin archivo)
+        console.log('Enviando datos (JSON):', dataToSend);
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(dataToSend),
+        });
+      }
+
+      let responseText = await response.clone().text();
+      console.log('Respuesta bruta del backend:', responseText);
+      result = await response.json();
+      console.log('Respuesta parseada:', result);
+      if (!response.ok || result.result !== 'success') throw new Error(result.message || 'No se pudo guardar la solicitud');
+
+      setSuccessModalVisible(true);
+      // Limpiar formulario si quieres
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'No se pudo guardar la solicitud');
     }
-  };
+  }
+};
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
+        {/* Modal de éxito */}
+        <Modal
+          visible={successModalVisible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setSuccessModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.successModal}>
+              <View style={styles.successIconContainer}>
+                <MaterialIcons name="check-circle" size={64} color="#4BB543" />
+              </View>
+              <Text style={styles.successTitle}>¡Solicitud enviada!</Text>
+              <Text style={styles.successMessage}>
+                Su solicitud de arbitraje ha sido enviada exitosamente. Nos contactaremos con usted pronto.
+              </Text>
+              <TouchableOpacity
+                style={styles.successButton}
+                onPress={() => setSuccessModalVisible(false)}
+              >
+                <Text style={styles.successButtonText}>Aceptar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <ScrollView 
           contentContainerStyle={[
             styles.scrollContainer,
@@ -1073,6 +1167,51 @@ const AgendarArbitraje: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  successModal: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 32,
+    alignItems: 'center',
+    width: 320,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  successIconContainer: {
+    marginBottom: 16,
+  },
+  successTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4BB543',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  successMessage: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  successButton: {
+    backgroundColor: '#4BB543',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+  },
+  successButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f8f9fa',
