@@ -171,13 +171,47 @@ const Cursos: React.FC = () => {
       {loading && <ActivityIndicator size="large" color="#183A7C" />}
       {error && <Text style={{ color: 'red', marginBottom: 16 }}>{error}</Text>}
       {cursos.map((curso) => (
-        <TouchableOpacity 
-          key={curso.id} 
-          style={styles.cursoCard}
+        <TouchableOpacity
+          key={curso.id}
+          style={({ pressed }) => [
+            styles.cursoCard,
+            pressed && styles.cursoCardPressed,
+          ]}
+          activeOpacity={0.85}
           onPress={() => openModal(curso)}
         >
-          <Text style={styles.cursoTitulo}>{curso.titulo}</Text>
+          <View style={styles.cursoCardHeader}>
+            <View style={styles.cursoIconContainer}>
+              <Ionicons name="school-outline" size={32} color="#183A7C" />
+            </View>
+            {curso.es_gratuito && (
+              <View style={styles.badgeGratis}>
+                <Text style={styles.badgeGratisText}>GRATUITO</Text>
+              </View>
+            )}
+          </View>
+          <Text style={styles.cursoTitulo}>{curso.titulo || curso.nombre}</Text>
           <Text style={styles.cursoDescripcion}>{curso.descripcion}</Text>
+          <View style={styles.cursoInfoRow}>
+            {curso.duracion_horas && (
+              <View style={styles.infoPill}>
+                <Ionicons name="time-outline" size={14} color="#4BB543" />
+                <Text style={styles.infoPillText}>{curso.duracion_horas}h</Text>
+              </View>
+            )}
+            {curso.precio_display && !curso.es_gratuito && (
+              <View style={styles.infoPill}>
+                <Ionicons name="pricetag-outline" size={14} color="#183A7C" />
+                <Text style={styles.infoPillText}>{curso.precio_display}</Text>
+              </View>
+            )}
+            {curso.empresa_display && (
+              <View style={styles.infoPill}>
+                <Ionicons name="business-outline" size={14} color="#183A7C" />
+                <Text style={styles.infoPillText}>{curso.empresa_display}</Text>
+              </View>
+            )}
+          </View>
           <View style={styles.verMasContainer}>
             <Text style={styles.verMasText}>Ver más</Text>
             <Ionicons name="arrow-forward" size={16} color="#183A7C" />
@@ -206,19 +240,77 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   cursoCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 22,
+    marginBottom: 20,
     width: '100%',
-    maxWidth: 400,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
+    maxWidth: 420,
+    shadowColor: '#183A7C',
+    shadowOpacity: 0.10,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: '#e3e8f0',
+    position: 'relative',
+    overflow: 'hidden',
+    transition: 'transform 0.1s',
+  },
+  cursoCardPressed: {
+    transform: [{ scale: 0.98 }],
+    shadowOpacity: 0.18,
+  },
+  cursoCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    justifyContent: 'space-between',
+  },
+  cursoIconContainer: {
+    backgroundColor: '#e3e8f0',
+    borderRadius: 12,
+    padding: 8,
+    marginRight: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeGratis: {
+    backgroundColor: '#4BB543',
+    borderRadius: 8,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    alignSelf: 'flex-start',
+    marginLeft: 'auto',
+  },
+  badgeGratisText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 1,
+  },
+  cursoInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  infoPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f4fa',
+    borderRadius: 8,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    marginRight: 6,
+    marginBottom: 4,
+  },
+  infoPillText: {
+    fontSize: 13,
+    color: '#183A7C',
+    marginLeft: 4,
+    fontWeight: '500',
   },
   cursoTitulo: {
     fontSize: 18,
