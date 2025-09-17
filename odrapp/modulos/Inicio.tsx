@@ -522,9 +522,112 @@ const Inicio: React.FC = () => {
         </View>
       </View>
     </Modal>
+
+    {/* Modal para mostrar imágenes de diplomado */}
+    <DiplomadoImageModal />
     </>
   );
 };
+
+const DiplomadoImageModal = () => {
+  const [showImage, setShowImage] = useState(false);
+  const [cursosImagen, setCursosImagen] = useState<string[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const fetchDiplomadoImages = async () => {
+    try {
+      let response = await fetch('https://chatbot-0-production.up.railway.app/naula/api/cursos/');
+      let data = await response.json();
+      let diplomadoCursos = [];
+      if (data.cursos) {
+        diplomadoCursos = data.cursos.filter((curso: any) =>
+          curso.categoria.nombre === 'Cursosodr'
+        );
+      } else if (Array.isArray(data)) {
+        diplomadoCursos = data.filter((curso: any) =>
+          curso.categoria.nombre === 'Cursosodr'
+        );
+      }
+      const imagenes = diplomadoCursos.map((curso: any) => curso.imagen);
+      setCursosImagen(imagenes);
+    } catch (error) {
+      setCursosImagen([]);
+    }
+  };
+
+  useEffect(() => {
+    setShowImage(true);
+    fetchDiplomadoImages();
+  }, []);
+
+  return (
+    <Modal visible={showImage} transparent animationType="fade">
+      <View style={modalStyles.modalContainer}>
+        <View style={modalStyles.imageWrapper}>
+          {cursosImagen.length > 0 ? (
+            <>
+              <Image
+                source={{ uri: cursosImagen[currentImageIndex]?.replace('http://', 'https://') }}
+                style={modalStyles.image}
+                resizeMode="contain"
+              />
+              {cursosImagen.length > 1 && (
+                <>
+                  <TouchableOpacity
+                    style={modalStyles.prevButton}
+                    onPress={() => setCurrentImageIndex(prev =>
+                      prev === 0 ? cursosImagen.length - 1 : prev - 1
+                    )}
+                  >
+                    <Text style={modalStyles.navButtonText}>‹</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={modalStyles.nextButton}
+                    onPress={() => setCurrentImageIndex(prev =>
+                      prev === cursosImagen.length - 1 ? 0 : prev + 1
+                    )}
+                  >
+                    <Text style={modalStyles.navButtonText}>›</Text>
+                  </TouchableOpacity>
+                  <View style={modalStyles.imageIndicator}>
+                    <Text style={modalStyles.indicatorText}>
+                      {currentImageIndex + 1} / {cursosImagen.length}
+                    </Text>
+                  </View>
+                </>
+              )}
+            </>
+          ) : (
+            <View style={modalStyles.loadingContainer}>
+              <Text style={modalStyles.loadingText}>Cargando imágenes...</Text>
+            </View>
+          )}
+          <TouchableOpacity
+            style={modalStyles.closeButton}
+            onPress={() => setShowImage(false)}
+          >
+            <Text style={modalStyles.closeText}>X</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const modalStyles = StyleSheet.create({
+  modalContainer: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", alignItems: "center" },
+  imageWrapper: { backgroundColor: "#fff", borderRadius: 12, padding: 10, alignItems: "center", position: "relative" },
+  image: { width: 300, height: 300, borderRadius: 10 },
+  closeButton: { position: "absolute", top: 8, right: 8, backgroundColor: "#e74c3c", borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
+  closeText: { color: "#fff", fontWeight: "bold", fontSize: 14 },
+  prevButton: { position: "absolute", left: 10, top: "50%", backgroundColor: "rgba(0,0,0,0.5)", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 8 },
+  nextButton: { position: "absolute", right: 10, top: "50%", backgroundColor: "rgba(0,0,0,0.5)", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 8 },
+  navButtonText: { color: "#fff", fontSize: 24, fontWeight: "bold" },
+  imageIndicator: { position: "absolute", bottom: 10, backgroundColor: "rgba(0,0,0,0.5)", borderRadius: 15, paddingHorizontal: 10, paddingVertical: 5 },
+  indicatorText: { color: "#fff", fontSize: 12, fontWeight: "bold" },
+  loadingContainer: { width: 300, height: 300, justifyContent: "center", alignItems: "center", backgroundColor: "#f0f0f0", borderRadius: 10 },
+  loadingText: { fontSize: 16, color: "#666", fontWeight: "bold" }
+});
 
 const styles = StyleSheet.create({
   newsCarousel: {
