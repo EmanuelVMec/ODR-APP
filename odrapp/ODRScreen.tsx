@@ -29,6 +29,7 @@ import Contacto from './modulos/Contacto';
 import AgendarArbitraje from './modulos/AgendarArbitraje';
 import QuienesSomos from './modulos/QuienesSomos';
 import Cursos from './modulos/Cursos';
+import Equipo from './modulos/Equipo';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -551,6 +552,7 @@ function ODRScreen({ navigation }: any) {
         { id: 'formacion', title: 'Formacion', component: <Formacion /> },
         { id: 'masc', title: 'Masc', component: <Masc /> },
         { id: 'contacto', title: 'Contacto', component: <Contacto /> },
+        { id: 'equipo', title: 'Equipo', component: <Equipo /> },
         { id: 'agendararbitraje', title: 'AgendarArbitraje', component: <AgendarArbitraje /> },
     ];
 
@@ -692,11 +694,10 @@ function ODRScreen({ navigation }: any) {
                     <View style={styles.header}>
                         <View style={styles.logoContainer}>
                             {<Image
-                                source={require('./assets/icon.png')}
+                                source={require('./assets/LOGO GENERAL NEGATIVO_1.png')}
                                 style={styles.logo}
                                 resizeMode="contain"
                             />}
-                            <Text style={styles.headerTitle}>ODR Ecuador</Text>
                         </View>
                         <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
                             <Ionicons name="menu" size={28} color="#fff" />
@@ -732,6 +733,7 @@ function ODRScreen({ navigation }: any) {
                             {activeTab === 'Formacion' && <Formacion />}
                             {activeTab === 'Masc' && <Masc />}
                             {activeTab === 'Contacto' && <Contacto />}
+                            {activeTab === 'Equipo' && <Equipo />}
                             {activeTab === 'AgendarArbitraje' && <AgendarArbitraje />}
                         </ScrollView>
                     </View>
@@ -932,8 +934,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     logo: {
-        width: 120,
-        height: 30,
+        width: 160, // antes 120
+        height: 45, // antes 30
         marginRight: 12
     },
     headerTitle: {

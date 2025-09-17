@@ -39,7 +39,7 @@ type OficinasData = { [key: string]: Provincia };
 
 const OFICINAS_DATA: OficinasData = {
   // ID 8 - Pichincha
-  "8": {
+  /*"8": {
     name: "Pichincha",
     ciudades: {
       "quito": {
@@ -77,6 +77,8 @@ const OFICINAS_DATA: OficinasData = {
       }
     }
   },
+  */
+
   // ID 5 - Guayas
   "5": {
     name: "Guayas",
@@ -90,14 +92,18 @@ const OFICINAS_DATA: OficinasData = {
           { id: "guayaquil_sur", name: "Guayaquil Sur" }
         ]
       },
-      "naranjal": {
+      
+      /*"naranjal": {
         name: "Naranjal",
         oficinas: [
           { id: "naranjal", name: "Naranjal" }
         ]
-      }
+      }*/
+
     }
   },
+
+  /*
   // ID 11 - Azuay
   "11": {
     name: "Azuay",
@@ -322,7 +328,9 @@ const OFICINAS_DATA: OficinasData = {
         ]
       }
     }
-  },
+  }, */
+
+
   // ID 1 - Los Ríos
   "1": {
     name: "Los Ríos",
@@ -333,6 +341,7 @@ const OFICINAS_DATA: OficinasData = {
           { id: "quevedo_matriz", name: "Matriz Quevedo" }
         ]
       },
+      /*
       "buena_fe": {
         name: "Buena Fe",
         oficinas: [
@@ -362,9 +371,11 @@ const OFICINAS_DATA: OficinasData = {
         oficinas: [
           { id: "san_carlos", name: "San Carlos" }
         ]
-      }
+      } */
     }
   },
+
+  /*
   // ID 4 - Santo Domingo de los Tsáchilas
   "4": {
     name: "Santo Domingo de los Tsáchilas",
@@ -455,8 +466,8 @@ const OFICINAS_DATA: OficinasData = {
         ]
       }
     }
-  }
-};
+  } */
+}; 
 
 interface FormData {
   tipoAudiencia: string;
@@ -548,15 +559,32 @@ const AgendarArbitraje: React.FC = () => {
   const selectDocument = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: ['application/pdf', 'image/*'],
+        type: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
         copyToCacheDirectory: true,
       });
-      
+
       if (!result.canceled && result.assets[0]) {
         const file = result.assets[0];
-        // Verificar tamaño (10 MB máximo)
+        // Validar tamaño (10 MB máximo)
         if (file.size && file.size > 10 * 1024 * 1024) {
           Alert.alert('Error', 'El archivo no puede superar los 10 MB');
+          return;
+        }
+        // Validar tipo de archivo
+        const allowedTypes = [
+          'application/pdf',
+          'image/jpeg',
+          'image/png',
+          'image/webp',
+          'image/jpg'
+        ];
+        if (!allowedTypes.includes(file.mimeType)) {
+          Alert.alert('Error', 'El archivo debe ser PDF o imagen (JPG, JPEG, PNG, WEBP)');
+          return;
+        }
+        // Validar nombre de archivo
+        if (!file.name || !/\.(pdf|jpg|jpeg|png|webp)$/i.test(file.name)) {
+          Alert.alert('Error', 'El archivo debe tener una extensión válida (pdf, jpg, jpeg, png, webp)');
           return;
         }
         updateFormData('comprobantePago', file);
@@ -1069,26 +1097,11 @@ const handleSubmit = async () => {
                       style={styles.picker}
                     >
                       <Picker.Item label="Seleccionar una opción" value="" />
-                      <Picker.Item label="Azuay" value="11" />
-                      <Picker.Item label="Carchi" value="13" />
-                      <Picker.Item label="Chimborazo" value="14" />
-                      <Picker.Item label="Cotopaxi" value="9" />
-                      <Picker.Item label="El Oro" value="6" />
-                      <Picker.Item label="Esmeraldas" value="7" />
-                      <Picker.Item label="Galápagos" value="19" />
+                      
                       <Picker.Item label="Guayas" value="5" />
-                      <Picker.Item label="Imbabura" value="10" />
-                      <Picker.Item label="Loja" value="12" />
+                      
                       <Picker.Item label="Los Ríos" value="1" />
-                      <Picker.Item label="Manabí" value="3" />
-                      <Picker.Item label="Morona Santiago" value="16" />
-                      <Picker.Item label="Napo" value="17" />
-                      <Picker.Item label="Pichincha" value="8" />
-                      <Picker.Item label="Santa Elena" value="2" />
-                      <Picker.Item label="Santo Domingo de los Tsáchilas" value="4" />
-                      <Picker.Item label="Sucumbíos" value="18" />
-                      <Picker.Item label="Tungurahua" value="15" />
-                      <Picker.Item label="Zamora Chinchipe" value="20" />
+                                            
                     </Picker>
                   </View>
 
@@ -1167,11 +1180,7 @@ const handleSubmit = async () => {
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
+  modalOverlay: {    flex: 1,    backgroundColor: 'rgba(0,0,0,0.4)',    justifyContent: 'center',    alignItems: 'center',
   },
   successModal: {
     backgroundColor: '#fff',

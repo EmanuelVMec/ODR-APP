@@ -104,61 +104,98 @@ const LoginScreen: React.FC = () => {
 					behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 					keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 30}
 				>
-				<View style={styles.container}>
-					{/* Logo con animación */}
+				{/* Fondo con gradiente */}
+				<Animated.View
+					style={{
+						...StyleSheet.absoluteFillObject,
+						backgroundColor: '#f5f8ff',
+					}}
+				>
 					<Animated.View
-						style={[
-							styles.logoContainer,
-							{
-								opacity: logoOpacity,
-								transform: [{ scale: logoScale }],
-							},
-						]}
-					>
-						<Image
-							source={require('../assets/LOGO GENERAL.png')}
-							style={styles.logo}
-							resizeMode="contain"
-						/>
-					</Animated.View>
-					
-					<Text style={styles.title}>Iniciar Sesión</Text>
-					<TextInput
-						style={styles.input}
-						placeholder="Email o Usuario"
-						value={identifier}
-						onChangeText={setIdentifier}
-						autoCapitalize="none"
+						style={{
+							position: 'absolute',
+							top: -120,
+							left: -80,
+							width: 350,
+							height: 350,
+							borderRadius: 180,
+							backgroundColor: '#2541b222', // azul más oscuro
+							opacity: 0.8, // un poco más visible
+						}}
 					/>
-					<View style={{ width: '100%', position: 'relative', marginBottom: 16 }}>
+					<Animated.View
+						style={{
+							position: 'absolute',
+							bottom: -100,
+							right: -80,
+							width: 320,
+							height: 320,
+							borderRadius: 160,
+							backgroundColor: '#ffd60077', // amarillo más oscuro
+							opacity: 0.6, // un poco más visible
+						}}
+					/>
+				</Animated.View>
+				<View style={styles.container}>
+					{/* Tarjeta central */}
+					<View style={styles.card}>
+						{/* Logo con animación */}
+						<Animated.View
+							style={[
+								styles.logoContainer,
+								{
+									opacity: logoOpacity,
+									transform: [{ scale: logoScale }],
+								},
+							]}
+						>
+							<Image
+								source={require('../assets/LOGO GENERAL.png')}
+								style={styles.logo}
+								resizeMode="contain"
+							/>
+						</Animated.View>
+						
+						<Text style={styles.title}>Iniciar Sesión</Text>
 						<TextInput
 							style={styles.input}
-							placeholder="Contraseña"
-							value={password}
-							onChangeText={setPassword}
-							secureTextEntry={!showPassword}
+							placeholder="Email o Usuario"
+							value={identifier}
+							onChangeText={setIdentifier}
+							autoCapitalize="none"
+							placeholderTextColor="#8fa1c7"
 						/>
-						<TouchableOpacity
-							style={{ position: 'absolute', right: 18, top: 10 }}
-							onPress={() => setShowPassword((prev) => !prev)}
-							hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-						>
-							<Ionicons
-								name={showPassword ? 'eye-off' : 'eye'}
-								size={22}
-								color="#888"
+						<View style={{ width: '100%', position: 'relative', marginBottom: 16 }}>
+							<TextInput
+								style={styles.input}
+								placeholder="Contraseña"
+								value={password}
+								onChangeText={setPassword}
+								secureTextEntry={!showPassword}
+								placeholderTextColor="#8fa1c7"
 							/>
+							<TouchableOpacity
+								style={{ position: 'absolute', right: 18, top: 10 }}
+								onPress={() => setShowPassword((prev) => !prev)}
+								hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+							>
+								<Ionicons
+									name={showPassword ? 'eye-off' : 'eye'}
+									size={22}
+									color="#8fa1c7"
+								/>
+							</TouchableOpacity>
+						</View>
+						<TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+							<Text style={styles.buttonText}>{loading ? 'Cargando...' : 'Entrar'}</Text>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => navigation.navigate('ForgotPassword' as never)}>
+							<Text style={styles.link}>¿Olvidaste tu contraseña?</Text>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => navigation.navigate('Register' as never)}>
+							<Text style={styles.linkSec}>¿No tienes cuenta? <Text style={{ color: '#3b63ff', fontWeight: 'bold' }}>Regístrate</Text></Text>
 						</TouchableOpacity>
 					</View>
-					<TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-						<Text style={styles.buttonText}>{loading ? 'Cargando...' : 'Entrar'}</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={() => navigation.navigate('ForgotPassword' as never)}>
-						<Text style={{ color: '#007AFF', marginTop: 10, marginBottom: 10 }}>¿Olvidaste tu contraseña?</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={() => navigation.navigate('Register' as never)}>
-						<Text style={{ color: '#007AFF', marginTop: 6 }}>¿No tienes cuenta? Regístrate</Text>
-					</TouchableOpacity>
 				</View>
 			</KeyboardAvoidingView>
 		</SafeAreaView>
@@ -172,41 +209,89 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: 20,
+		backgroundColor: 'transparent',
+	},
+	card: {
+		width: '100%',
+		maxWidth: 370,
 		backgroundColor: '#fff',
+		borderRadius: 18,
+		paddingVertical: 36,
+		paddingHorizontal: 22,
+		alignItems: 'center',
+		shadowColor: '#3b63ff',
+		shadowOffset: { width: 0, height: 8 },
+		shadowOpacity: 0.10,
+		shadowRadius: 18,
+		elevation: 8,
 	},
 	logoContainer: {
-		marginBottom: -20,
+		marginBottom: 0,
 		alignItems: 'center',
-		top: -70,
+		top: -30,
 	},
 	logo: {
-		width: 170,
-		height: 130,
+		width: 140,
+		height: 90,
+		marginBottom: 21,
+		top: 27,
 	},
 	title: {
-		fontSize: 24,
+		fontSize: 26,
 		fontWeight: 'bold',
 		marginBottom: 24,
+		color: '#1a2c6c',
+		letterSpacing: 0.2,
 	},
 	input: {
 		width: '100%',
-		height: 40,
-		borderColor: '#ccc',
-		borderWidth: 1,
-		borderRadius: 5,
+		height: 46,
+		borderColor: '#e3e8f0',
+		borderWidth: 1.5,
+		borderRadius: 10,
 		marginBottom: 16,
-		paddingHorizontal: 10,
+		paddingHorizontal: 14,
+		backgroundColor: '#f7faff',
+		fontSize: 16,
+		color: '#1a2c6c',
+		shadowColor: '#3b63ff',
+		shadowOffset: { width: 0, height: 1 },
+		shadowOpacity: 0.04,
+		shadowRadius: 2,
 	},
 	button: {
-		backgroundColor: '#007AFF',
-		padding: 12,
-		borderRadius: 5,
+		backgroundColor: '#3b63ff',
+		paddingVertical: 13,
+		borderRadius: 10,
 		alignItems: 'center',
 		width: '100%',
+		marginTop: 4,
+		marginBottom: 10,
+		shadowColor: '#3b63ff',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.13,
+		shadowRadius: 4,
+		elevation: 2,
 	},
 	buttonText: {
 		color: '#fff',
 		fontWeight: 'bold',
+		fontSize: 17,
+		letterSpacing: 0.2,
+	},
+	link: {
+		color: '#3b63ff',
+		marginTop: 10,
+		marginBottom: 10,
+		fontSize: 15,
+		fontWeight: '500',
+		textAlign: 'center',
+	},
+	linkSec: {
+		color: '#888',
+		marginTop: 6,
+		fontSize: 15,
+		textAlign: 'center',
 	},
 });
 
