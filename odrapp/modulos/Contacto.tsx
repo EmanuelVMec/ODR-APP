@@ -292,8 +292,9 @@ const Contacto = () => {
         </Text>
 
         <View style={styles.locationCard}>
+          {/* Imagen local del mapa */}
           <Image
-            source={{ uri: 'https://odrecuador.com/assets/img/list/oficina-odr-ecuador.jpg' }}
+            source={require('../assets/MAPAODR.jpeg')}
             style={styles.locationImage}
             resizeMode="cover"
           />
