@@ -71,24 +71,27 @@ const PerfilModal = ({ visible, onClose }: { visible: boolean; onClose: () => vo
               </>
             )}
           </TouchableOpacity>
-          <Text style={styles.title}>Editar Perfil</Text>
+          <Text style={[styles.title, { color: '#000' }]}>Editar Perfil</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: '#000', backgroundColor: '#fff' }]}
             placeholder="Nombre"
+            placeholderTextColor="#888"
             value={firstName}
             onChangeText={setFirstName}
             autoCapitalize="words"
           />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: '#000', backgroundColor: '#fff' }]}
             placeholder="Apellido"
+            placeholderTextColor="#888"
             value={lastName}
             onChangeText={setLastName}
             autoCapitalize="words"
           />
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: '#000', backgroundColor: '#fff' }]}
             placeholder="Usuario"
+            placeholderTextColor="#888"
             value={username}
             onChangeText={setUsername}
             autoCapitalize="none"
@@ -152,6 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 18,
+    color: '#000',
   },
   input: {
     width: '100%',
@@ -161,6 +165,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 14,
     paddingHorizontal: 10,
+    color: '#000',
+    backgroundColor: '#fff',
   },
   buttonRow: {
     flexDirection: 'row',

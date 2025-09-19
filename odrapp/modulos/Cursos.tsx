@@ -70,7 +70,7 @@ const Cursos: React.FC = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Cursos</Text>
+      <Text style={[styles.title, { color: '#183A7C' }]}>Cursos</Text>
       
       {/* Modal de detalles del curso */}
       <Modal
@@ -89,10 +89,11 @@ const Cursos: React.FC = () => {
               style={styles.modalScrollView}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.modalScrollContent}
+              nestedScrollEnabled={true}
             >
               {selectedCurso && (
                 <>
-                  <Text style={styles.modalTitle}>
+                  <Text style={[styles.modalTitle, { color: '#183A7C' }]}>
                     {selectedCurso.titulo || selectedCurso.nombre}
                   </Text>
 
@@ -101,7 +102,7 @@ const Cursos: React.FC = () => {
                     <View style={styles.modalBadgeContainer}>
                       <View style={styles.modalBadgeGratis}>
                         <Ionicons name="gift-outline" size={16} color="#fff" />
-                        <Text style={styles.modalBadgeText}>CURSO GRATUITO</Text>
+                        <Text style={[styles.modalBadgeText, { color: '#fff' }]}>CURSO GRATUITO</Text>
                       </View>
                     </View>
                   )}
@@ -110,24 +111,24 @@ const Cursos: React.FC = () => {
                   <View style={styles.modalSection}>
                     <View style={styles.sectionHeader}>
                       <Ionicons name="document-text-outline" size={20} color="#183A7C" />
-                      <Text style={styles.modalSectionTitle}>Descripción</Text>
+                      <Text style={[styles.modalSectionTitle, { color: '#183A7C' }]}>Descripción</Text>
                     </View>
-                    <Text style={styles.modalText}>
+                    <Text style={[styles.modalText, { color: '#495057' }]}>
                       {selectedCurso.descripcionCompleta || selectedCurso.descripcion}
                     </Text>
                   </View>
 
                   {/* Información general del curso */}
                   <View style={styles.courseInfoContainer}>
-                    <Text style={styles.infoContainerTitle}>Información del Curso</Text>
+                    <Text style={[styles.infoContainerTitle, { color: '#183A7C' }]}>Información del Curso</Text>
                     
                     {selectedCurso.duracion_horas && (
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="time-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Duración</Text>
+                          <Text style={[styles.infoTitle, { color: '#495057' }]}>Duración</Text>
                         </View>
-                        <Text style={styles.infoValue}>{selectedCurso.duracion_horas} horas académicas</Text>
+                        <Text style={[styles.infoValue, { color: '#212529' }]}>{selectedCurso.duracion_horas} horas académicas</Text>
                       </View>
                     )}
 
@@ -135,9 +136,9 @@ const Cursos: React.FC = () => {
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="calendar-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Duración del Programa</Text>
+                          <Text style={[styles.infoTitle, { color: '#495057' }]}>Duración del Programa</Text>
                         </View>
-                        <Text style={styles.infoValue}>{selectedCurso.duracion}</Text>
+                        <Text style={[styles.infoValue, { color: '#212529' }]}>{selectedCurso.duracion}</Text>
                       </View>
                     )}
 
@@ -145,9 +146,9 @@ const Cursos: React.FC = () => {
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="desktop-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Modalidad</Text>
+                          <Text style={[styles.infoTitle, { color: '#495057' }]}>Modalidad</Text>
                         </View>
-                        <Text style={styles.infoValue}>{selectedCurso.modalidad_display}</Text>
+                        <Text style={[styles.infoValue, { color: '#212529' }]}>{selectedCurso.modalidad_display}</Text>
                       </View>
                     )}
 
@@ -155,9 +156,9 @@ const Cursos: React.FC = () => {
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="pricetag-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Inversión</Text>
+                          <Text style={[styles.infoTitle, { color: '#495057' }]}>Inversión</Text>
                         </View>
-                        <Text style={styles.modalPrice}>{selectedCurso.precio_display}</Text>
+                        <Text style={[styles.modalPrice, { color: '#28a745' }]}>{selectedCurso.precio_display}</Text>
                       </View>
                     )}
 
@@ -165,9 +166,9 @@ const Cursos: React.FC = () => {
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="pricetag-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Inversión</Text>
+                          <Text style={[styles.infoTitle, { color: '#495057' }]}>Inversión</Text>
                         </View>
-                        <Text style={styles.modalPrice}>${selectedCurso.precio}</Text>
+                        <Text style={[styles.modalPrice, { color: '#28a745' }]}>${selectedCurso.precio}</Text>
                       </View>
                     )}
 
@@ -175,9 +176,9 @@ const Cursos: React.FC = () => {
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="business-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Institución</Text>
+                          <Text style={[styles.infoTitle, { color: '#495057' }]}>Institución</Text>
                         </View>
-                        <Text style={styles.infoValue}>{selectedCurso.empresa_display}</Text>
+                        <Text style={[styles.infoValue, { color: '#212529' }]}>{selectedCurso.empresa_display}</Text>
                       </View>
                     )}
 
@@ -185,9 +186,9 @@ const Cursos: React.FC = () => {
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="person-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Instructor</Text>
+                          <Text style={[styles.infoTitle, { color: '#495057' }]}>Instructor</Text>
                         </View>
-                        <Text style={styles.infoValue}>{selectedCurso.instructor}</Text>
+                        <Text style={[styles.infoValue, { color: '#212529' }]}>{selectedCurso.instructor}</Text>
                       </View>
                     )}
 
@@ -195,9 +196,9 @@ const Cursos: React.FC = () => {
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="alarm-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Horarios</Text>
+                          <Text style={[styles.infoTitle, { color: '#495057' }]}>Horarios</Text>
                         </View>
-                        <Text style={styles.infoValue}>{selectedCurso.horarios}</Text>
+                        <Text style={[styles.infoValue, { color: '#212529' }]}>{selectedCurso.horarios}</Text>
                       </View>
                     )}
                   </View>
@@ -207,13 +208,13 @@ const Cursos: React.FC = () => {
                     <View style={styles.modalSection}>
                       <View style={styles.sectionHeader}>
                         <Ionicons name="checkmark-circle-outline" size={20} color="#183A7C" />
-                        <Text style={styles.modalSectionTitle}>Requisitos</Text>
+                        <Text style={[styles.modalSectionTitle, { color: '#183A7C' }]}>Requisitos</Text>
                       </View>
                       <View style={styles.requisitosList}>
                         {selectedCurso.requisitos.map((requisito, index) => (
                           <View key={index} style={styles.requisitoItem}>
                             <Ionicons name="chevron-forward" size={14} color="#4BB543" />
-                            <Text style={styles.modalRequisito}>{requisito}</Text>
+                            <Text style={[styles.modalRequisito, { color: '#495057' }]}>{requisito}</Text>
                           </View>
                         ))}
                       </View>
@@ -225,13 +226,13 @@ const Cursos: React.FC = () => {
                     <View style={styles.modalSection}>
                       <View style={styles.sectionHeader}>
                         <Ionicons name="star-outline" size={20} color="#183A7C" />
-                        <Text style={styles.modalSectionTitle}>Beneficios</Text>
+                        <Text style={[styles.modalSectionTitle, { color: '#183A7C' }]}>Beneficios</Text>
                       </View>
                       <View style={styles.beneficiosList}>
                         {selectedCurso.beneficios.map((beneficio, index) => (
                           <View key={index} style={styles.beneficioItem}>
                             <Ionicons name="trophy-outline" size={14} color="#FFD700" />
-                            <Text style={styles.modalBeneficio}>{beneficio}</Text>
+                            <Text style={[styles.modalBeneficio, { color: '#495057' }]}>{beneficio}</Text>
                           </View>
                         ))}
                       </View>
@@ -240,7 +241,7 @@ const Cursos: React.FC = () => {
 
                   <TouchableOpacity style={styles.enrollButton} onPress={openChatWidget}>
                     <Ionicons name="bookmark-outline" size={20} color="#fff" style={{ marginRight: 8 }} />
-                    <Text style={styles.enrollButtonText}>Inscribirse al Curso</Text>
+                    <Text style={[styles.enrollButtonText, { color: '#fff' }]}>Inscribirse al Curso</Text>
                   </TouchableOpacity>
                 </>
               )}
@@ -264,34 +265,34 @@ const Cursos: React.FC = () => {
             </View>
             {curso.es_gratuito && (
               <View style={styles.badgeGratis}>
-                <Text style={styles.badgeGratisText}>GRATUITO</Text>
+                <Text style={[styles.badgeGratisText, { color: '#fff' }]}>GRATUITO</Text>
               </View>
             )}
           </View>
-          <Text style={styles.cursoTitulo}>{curso.titulo || curso.nombre}</Text>
-          <Text style={styles.cursoDescripcion}>{curso.descripcion}</Text>
+          <Text style={[styles.cursoTitulo, { color: '#183A7C' }]}>{curso.titulo || curso.nombre}</Text>
+          <Text style={[styles.cursoDescripcion, { color: '#6c757d' }]}>{curso.descripcion}</Text>
           <View style={styles.cursoInfoRow}>
             {curso.duracion_horas && (
               <View style={styles.infoPill}>
                 <Ionicons name="time-outline" size={14} color="#4BB543" />
-                <Text style={styles.infoPillText}>{curso.duracion_horas}h</Text>
+                <Text style={[styles.infoPillText, { color: '#183A7C' }]}>{curso.duracion_horas}h</Text>
               </View>
             )}
             {curso.precio_display && !curso.es_gratuito && (
               <View style={styles.infoPill}>
                 <Ionicons name="pricetag-outline" size={14} color="#183A7C" />
-                <Text style={styles.infoPillText}>{curso.precio_display}</Text>
+                <Text style={[styles.infoPillText, { color: '#183A7C' }]}>{curso.precio_display}</Text>
               </View>
             )}
             {curso.empresa_display && (
               <View style={styles.infoPill}>
                 <Ionicons name="business-outline" size={14} color="#183A7C" />
-                <Text style={styles.infoPillText}>{curso.empresa_display}</Text>
+                <Text style={[styles.infoPillText, { color: '#183A7C' }]}>{curso.empresa_display}</Text>
               </View>
             )}
           </View>
           <View style={styles.verMasContainer}>
-            <Text style={styles.verMasText}>Ver más</Text>
+            <Text style={[styles.verMasText, { color: '#183A7C' }]}>Ver más</Text>
             <Ionicons name="arrow-forward" size={16} color="#183A7C" />
           </View>
         </TouchableOpacity>
@@ -421,14 +422,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 10,
   },
   modalContent: {
     backgroundColor: '#fff',
     borderRadius: 24,
-    width: '100%',
+    width: '95%',
     maxWidth: 420,
-    maxHeight: '85%',
+    height: '90%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
@@ -437,11 +438,13 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   modalScrollView: {
-    maxHeight: '100%',
+    flex: 1,
+    paddingTop: 50,
   },
   modalScrollContent: {
-    padding: 24,
-    paddingTop: 50, // Space for close button
+    padding: 20,
+    paddingBottom: 50,
+    flexGrow: 1,
   },
   closeButton: {
     position: 'absolute',
@@ -540,7 +543,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: 20,
+    marginBottom: 10,
     shadowColor: '#183A7C',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
