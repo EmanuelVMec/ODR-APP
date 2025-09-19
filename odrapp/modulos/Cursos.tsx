@@ -96,6 +96,16 @@ const Cursos: React.FC = () => {
                     {selectedCurso.titulo || selectedCurso.nombre}
                   </Text>
 
+                  {/* Badge de gratuito si aplica */}
+                  {selectedCurso.es_gratuito && (
+                    <View style={styles.modalBadgeContainer}>
+                      <View style={styles.modalBadgeGratis}>
+                        <Ionicons name="gift-outline" size={16} color="#fff" />
+                        <Text style={styles.modalBadgeText}>CURSO GRATUITO</Text>
+                      </View>
+                    </View>
+                  )}
+
                   {/* Descripción principal */}
                   <View style={styles.modalSection}>
                     <View style={styles.sectionHeader}>
@@ -107,25 +117,67 @@ const Cursos: React.FC = () => {
                     </Text>
                   </View>
 
-                  {/* Información del curso */}
+                  {/* Información general del curso */}
                   <View style={styles.courseInfoContainer}>
-                    {selectedCurso.duracion && (
+                    <Text style={styles.infoContainerTitle}>Información del Curso</Text>
+                    
+                    {selectedCurso.duracion_horas && (
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="time-outline" size={18} color="#4BB543" />
                           <Text style={styles.infoTitle}>Duración</Text>
                         </View>
+                        <Text style={styles.infoValue}>{selectedCurso.duracion_horas} horas académicas</Text>
+                      </View>
+                    )}
+
+                    {selectedCurso.duracion && (
+                      <View style={styles.infoCard}>
+                        <View style={styles.infoHeader}>
+                          <Ionicons name="calendar-outline" size={18} color="#4BB543" />
+                          <Text style={styles.infoTitle}>Duración del Programa</Text>
+                        </View>
                         <Text style={styles.infoValue}>{selectedCurso.duracion}</Text>
                       </View>
                     )}
 
-                    {selectedCurso.precio && (
+                    {selectedCurso.modalidad_display && (
+                      <View style={styles.infoCard}>
+                        <View style={styles.infoHeader}>
+                          <Ionicons name="desktop-outline" size={18} color="#4BB543" />
+                          <Text style={styles.infoTitle}>Modalidad</Text>
+                        </View>
+                        <Text style={styles.infoValue}>{selectedCurso.modalidad_display}</Text>
+                      </View>
+                    )}
+
+                    {selectedCurso.precio_display && !selectedCurso.es_gratuito && (
                       <View style={styles.infoCard}>
                         <View style={styles.infoHeader}>
                           <Ionicons name="pricetag-outline" size={18} color="#4BB543" />
-                          <Text style={styles.infoTitle}>Precio</Text>
+                          <Text style={styles.infoTitle}>Inversión</Text>
                         </View>
-                        <Text style={styles.modalPrice}>{selectedCurso.precio}</Text>
+                        <Text style={styles.modalPrice}>{selectedCurso.precio_display}</Text>
+                      </View>
+                    )}
+
+                    {selectedCurso.precio && !selectedCurso.precio_display && !selectedCurso.es_gratuito && (
+                      <View style={styles.infoCard}>
+                        <View style={styles.infoHeader}>
+                          <Ionicons name="pricetag-outline" size={18} color="#4BB543" />
+                          <Text style={styles.infoTitle}>Inversión</Text>
+                        </View>
+                        <Text style={styles.modalPrice}>${selectedCurso.precio}</Text>
+                      </View>
+                    )}
+
+                    {selectedCurso.empresa_display && (
+                      <View style={styles.infoCard}>
+                        <View style={styles.infoHeader}>
+                          <Ionicons name="business-outline" size={18} color="#4BB543" />
+                          <Text style={styles.infoTitle}>Institución</Text>
+                        </View>
+                        <Text style={styles.infoValue}>{selectedCurso.empresa_display}</Text>
                       </View>
                     )}
 
@@ -138,8 +190,19 @@ const Cursos: React.FC = () => {
                         <Text style={styles.infoValue}>{selectedCurso.instructor}</Text>
                       </View>
                     )}
+
+                    {selectedCurso.horarios && (
+                      <View style={styles.infoCard}>
+                        <View style={styles.infoHeader}>
+                          <Ionicons name="alarm-outline" size={18} color="#4BB543" />
+                          <Text style={styles.infoTitle}>Horarios</Text>
+                        </View>
+                        <Text style={styles.infoValue}>{selectedCurso.horarios}</Text>
+                      </View>
+                    )}
                   </View>
 
+                  {/* Requisitos */}
                   {selectedCurso.requisitos && selectedCurso.requisitos.length > 0 && (
                     <View style={styles.modalSection}>
                       <View style={styles.sectionHeader}>
@@ -151,6 +214,24 @@ const Cursos: React.FC = () => {
                           <View key={index} style={styles.requisitoItem}>
                             <Ionicons name="chevron-forward" size={14} color="#4BB543" />
                             <Text style={styles.modalRequisito}>{requisito}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  )}
+
+                  {/* Beneficios */}
+                  {selectedCurso.beneficios && selectedCurso.beneficios.length > 0 && (
+                    <View style={styles.modalSection}>
+                      <View style={styles.sectionHeader}>
+                        <Ionicons name="star-outline" size={20} color="#183A7C" />
+                        <Text style={styles.modalSectionTitle}>Beneficios</Text>
+                      </View>
+                      <View style={styles.beneficiosList}>
+                        {selectedCurso.beneficios.map((beneficio, index) => (
+                          <View key={index} style={styles.beneficioItem}>
+                            <Ionicons name="trophy-outline" size={14} color="#FFD700" />
+                            <Text style={styles.modalBeneficio}>{beneficio}</Text>
                           </View>
                         ))}
                       </View>
@@ -173,10 +254,7 @@ const Cursos: React.FC = () => {
       {cursos.map((curso) => (
         <TouchableOpacity
           key={curso.id}
-          style={({ pressed }) => [
-            styles.cursoCard,
-            pressed && styles.cursoCardPressed,
-          ]}
+          style={styles.cursoCard}
           activeOpacity={0.85}
           onPress={() => openModal(curso)}
         >
@@ -255,7 +333,6 @@ const styles = StyleSheet.create({
     borderColor: '#e3e8f0',
     position: 'relative',
     overflow: 'hidden',
-    transition: 'transform 0.1s',
   },
   cursoCardPressed: {
     transform: [{ scale: 0.98 }],
@@ -474,6 +551,56 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  modalBadgeContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalBadgeGratis: {
+    backgroundColor: '#4BB543',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#4BB543',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  modalBadgeText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
+    letterSpacing: 1,
+    marginLeft: 6,
+  },
+  infoContainerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#183A7C',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  beneficiosList: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FFD700',
+  },
+  beneficioItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  modalBeneficio: {
+    fontSize: 14,
+    color: '#495057',
+    flex: 1,
+    marginLeft: 6,
+    fontWeight: '500',
   },
 });
 

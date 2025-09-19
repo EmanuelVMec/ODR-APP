@@ -29,7 +29,7 @@ import Contacto from './modulos/Contacto';
 import AgendarArbitraje from './modulos/AgendarArbitraje';
 import QuienesSomos from './modulos/QuienesSomos';
 import Cursos from './modulos/Cursos';
-import Equipo from './modulos/Equipo';
+//import Equipo from './modulos/Equipo';
 
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
 
@@ -552,7 +552,7 @@ function ODRScreen({ navigation }: any) {
         { id: 'formacion', title: 'Formacion', component: <Formacion /> },
         { id: 'masc', title: 'Masc', component: <Masc /> },
         { id: 'contacto', title: 'Contacto', component: <Contacto /> },
-        { id: 'equipo', title: 'Equipo', component: <Equipo /> },
+       // { id: 'equipo', title: 'Equipo', component: <Equipo /> },
         { id: 'agendararbitraje', title: 'AgendarArbitraje', component: <AgendarArbitraje /> },
     ];
 
@@ -733,7 +733,7 @@ function ODRScreen({ navigation }: any) {
                             {activeTab === 'Formacion' && <Formacion />}
                             {activeTab === 'Masc' && <Masc />}
                             {activeTab === 'Contacto' && <Contacto />}
-                            {activeTab === 'Equipo' && <Equipo />}
+                           {/* {activeTab === 'Equipo' && <Equipo />} */}
                             {activeTab === 'AgendarArbitraje' && <AgendarArbitraje />}
                         </ScrollView>
                     </View>
